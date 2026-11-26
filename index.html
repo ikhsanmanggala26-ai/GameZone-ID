@@ -635,35 +635,55 @@
             if (!hasAdmin) {
                 targetState.users.unshift(createDefaultState().users[0]);
             }
-            if (!Array.isArray(targetState.games)) return;
+            if (!Array.isArray(targetState.games) || targetState.games.length === 0) {
+                targetState.games = createDefaultState().games;
+            }
+            if (!Array.isArray(targetState.customPages)) {
+                targetState.customPages = createDefaultState().customPages;
+            }
+            if (!Array.isArray(targetState.leaderboard)) {
+                targetState.leaderboard = [];
+            }
+            if (!Array.isArray(targetState.transactions)) {
+                targetState.transactions = [];
+            }
+            if (!Array.isArray(targetState.chatMessages)) {
+                targetState.chatMessages = [];
+            }
+            if (!targetState.topupConfig) {
+                targetState.topupConfig = createDefaultState().topupConfig;
+            }
+            if (!Array.isArray(targetState.topupConfig.packages)) {
+                targetState.topupConfig.packages = createDefaultState().topupConfig.packages;
+            }
+            if (!Array.isArray(targetState.topupConfig.paymentMethods) || targetState.topupConfig.paymentMethods.length === 0) {
+                targetState.topupConfig.paymentMethods = createDefaultState().topupConfig.paymentMethods;
+            }
+
             targetState.games.forEach(g => {
                 if (!g.coinName) g.coinName = 'Koin ' + g.title;
                 if (typeof g.playCost !== 'number') g.playCost = 0;
 
-                if (Array.isArray(targetState.users)) {
-                    targetState.users.forEach(u => {
-                        if (!u.gameWallets || typeof u.gameWallets !== 'object') {
-                            u.gameWallets = {};
-                        }
-                        if (typeof u.gameWallets[g.id] !== 'number') {
-                            u.gameWallets[g.id] = 0;
-                        }
-                    });
-                }
-
-                if (targetState.topupConfig && Array.isArray(targetState.topupConfig.packages)) {
-                    const hasPkg = targetState.topupConfig.packages.some(p => p.gameId === g.id);
-                    if (!hasPkg) {
-                        targetState.topupConfig.packages.push({
-                            id: 'pkg-' + g.id + '-starter',
-                            gameId: g.id,
-                            name: 'Starter ' + g.coinName,
-                            coins: 100,
-                            bonus: 15,
-                            price: 10000,
-                            tag: 'Baru'
-                        });
+                targetState.users.forEach(u => {
+                    if (!u.gameWallets || typeof u.gameWallets !== 'object') {
+                        u.gameWallets = {};
                     }
+                    if (typeof u.gameWallets[g.id] !== 'number') {
+                        u.gameWallets[g.id] = 0;
+                    }
+                });
+
+                const hasPkg = targetState.topupConfig.packages.some(p => p.gameId === g.id);
+                if (!hasPkg) {
+                    targetState.topupConfig.packages.push({
+                        id: 'pkg-' + g.id + '-starter',
+                        gameId: g.id,
+                        name: 'Starter ' + g.coinName,
+                        coins: 100,
+                        bonus: 15,
+                        price: 10000,
+                        tag: 'Baru'
+                    });
                 }
             });
         }
@@ -808,7 +828,7 @@
         let portalIdleCheckInterval = null;
 
         // =========================================================================
-        // 4. UTILITAS UMUM, SALDO KOIN PER GAME, TEMA & AVATAR TERINTEGRASI
+        // 4. UTILITAS UMUM, SANITASI URL, SALDO KOIN PER GAME & AVATAR
         // =========================================================================
         function escapeHtml(str) {
             if (str === null || str === undefined) return '';
@@ -818,6 +838,18 @@
                 .replace(/>/g, '&gt;')
                 .replace(/"/g, '&quot;')
                 .replace(/'/g, '&#039;');
+        }
+
+        function sanitizeSafeUrl(url, allowDataImage = false) {
+            const raw = String(url || '').trim();
+            if (!raw) return '';
+            if (allowDataImage && /^data:image\/(png|jpeg|jpg|gif|webp|svg\+xml);base64,/i.test(raw)) {
+                return raw;
+            }
+            if (/^https?:\/\//i.test(raw)) {
+                return raw;
+            }
+            return '';
         }
 
         function formatRupiah(num) {
@@ -847,7 +879,7 @@
         function applyFavicon() {
             const link = document.getElementById('dynamicFavicon');
             if (!link) return;
-            const customFav = state.siteSettings.faviconUrl || state.siteSettings.logoUrl;
+            const customFav = sanitizeSafeUrl(state.siteSettings.faviconUrl || state.siteSettings.logoUrl, true);
             link.href = customFav || DEFAULT_EAGLE_FAVICON_URI;
             document.title = `${state.siteSettings.siteName} - ${state.siteSettings.tagline}`;
         }
@@ -991,10 +1023,11 @@
             }
             const iconName = escapeHtml(user.avatarIcon || 'fa-user-astronaut');
             const bgGrad = escapeHtml(user.avatarBg || 'from-indigo-500 to-purple-600');
-            if (user.avatarUrl) {
+            const safeAvatar = sanitizeSafeUrl(user.avatarUrl, true);
+            if (safeAvatar) {
                 return `
                     <div class="relative ${sizeClass} shrink-0">
-                        <img src="${escapeHtml(user.avatarUrl)}" alt="${escapeHtml(user.name)}"
+                        <img src="${escapeHtml(safeAvatar)}" alt="${escapeHtml(user.name)}"
                             onerror="this.style.display='none'; if(this.nextElementSibling) this.nextElementSibling.style.display='flex';"
                             class="w-full h-full rounded-full object-cover border border-slate-700/80 shadow-sm">
                         <div style="display:none" class="w-full h-full rounded-full bg-gradient-to-br ${bgGrad} items-center justify-center text-white font-bold shadow-md">
@@ -1012,8 +1045,9 @@
 
         function renderBrandLogo(sizeClass = 'w-9 h-9') {
             const s = state.siteSettings;
-            if (s.logoUrl) {
-                return `<img src="${escapeHtml(s.logoUrl)}" alt="${escapeHtml(s.siteName)}" class="${sizeClass} rounded-xl object-cover border border-slate-700/80 shadow-md shrink-0">`;
+            const safeLogo = sanitizeSafeUrl(s.logoUrl, true);
+            if (safeLogo) {
+                return `<img src="${escapeHtml(safeLogo)}" alt="${escapeHtml(s.siteName)}" class="${sizeClass} rounded-xl object-cover border border-slate-700/80 shadow-md shrink-0">`;
             }
             if (!s.logoIcon || s.logoIcon === 'eagle-mascot' || s.logoIcon === 'fa-gamepad') {
                 return renderEagleMascotSvg(sizeClass);
@@ -1029,11 +1063,20 @@
         // =========================================================================
         // 6. NAVIGASI UTAMA & RENDER SHELL (HEADER + MAIN + FOOTER)
         // =========================================================================
+        function closeAllModals() {
+            closeAuthModal();
+            closeCheckoutModal();
+            closeGameModal();
+            closeCustomPageModal();
+            closeAdminUserModal();
+        }
+
         function navigateTo(page, param = null) {
             if (activeGameCleanup) {
                 activeGameCleanup();
                 activeGameCleanup = null;
             }
+            closeAllModals();
             ui.currentPage = page;
             ui.mobileMenuOpen = false;
             if (page === 'custom') {
@@ -1114,7 +1157,7 @@
             const navBtn = (page, icon, label, param = null) => {
                 const isActive = ui.currentPage === page && (page !== 'custom' || ui.customPageId === param);
                 return `
-                    <button type="button" onclick="navigateTo('${page}', ${param ? `'${param}'` : 'null'})"
+                    <button type="button" onclick="navigateTo('${page}', ${param ? `'${escapeHtml(param)}'` : 'null'})"
                         class="px-3.5 py-2 rounded-xl text-xs font-semibold transition flex items-center gap-2 ${isActive ? theme.navActive : 'text-slate-300 hover:text-white hover:bg-slate-800/70'}">
                         <i class="fa-solid ${escapeHtml(icon)}"></i>
                         <span>${escapeHtml(label)}</span>
@@ -1222,10 +1265,12 @@
                             </div>
                         </div>
                         <div class="flex items-center gap-3">
-                            <button type="button" onclick="toggleChatOverlay(true)" class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-slate-900 border border-slate-800 hover:border-sky-500/40 text-xs font-semibold text-slate-200 transition">
-                                <i class="fa-brands fa-telegram text-sky-400 text-base"></i>
-                                <span>Telegram Chat Overlay (Shift+Tab)</span>
-                            </button>
+                            ${s.chatEnabled ? `
+                                <button type="button" onclick="toggleChatOverlay(true)" class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-slate-900 border border-slate-800 hover:border-sky-500/40 text-xs font-semibold text-slate-200 transition">
+                                    <i class="fa-brands fa-telegram text-sky-400 text-base"></i>
+                                    <span>Telegram Chat Overlay (Shift+Tab)</span>
+                                </button>
+                            ` : ''}
                         </div>
                     </div>
                 </footer>
@@ -1337,12 +1382,13 @@
             const coinLabel = game.coinName || ('Koin ' + game.title);
             const walletBal = user ? getUserGameCoins(user, game.id) : 0;
             const playCost = Number(game.playCost || 0);
+            const safeThumb = sanitizeSafeUrl(game.thumbnailUrl, true);
 
             return `
                 <div class="group rounded-3xl bg-slate-900 border border-slate-800 hover:border-slate-700 overflow-hidden flex flex-col transition shadow-lg">
-                    <div class="relative h-40 overflow-hidden bg-gradient-to-br ${game.gradient || 'from-indigo-600 to-slate-900'} flex items-center justify-center">
-                        ${game.thumbnailUrl ? `
-                            <img src="${escapeHtml(game.thumbnailUrl)}" alt="${escapeHtml(game.title)}"
+                    <div class="relative h-40 overflow-hidden bg-gradient-to-br ${escapeHtml(game.gradient || 'from-indigo-600 to-slate-900')} flex items-center justify-center">
+                        ${safeThumb ? `
+                            <img src="${escapeHtml(safeThumb)}" alt="${escapeHtml(game.title)}"
                                 onerror="this.style.display='none'"
                                 class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
                         ` : `
@@ -1377,10 +1423,10 @@
                                 </div>
                             ` : ''}
                             <div class="flex items-center justify-between gap-2">
-                                <button type="button" onclick="navigateTo('topup', '${game.id}')" class="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-[11px] font-bold text-amber-300 transition">
+                                <button type="button" onclick="navigateTo('topup', '${escapeHtml(game.id)}')" class="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-[11px] font-bold text-amber-300 transition">
                                     <i class="fa-solid fa-plus mr-1"></i>Top-Up
                                 </button>
-                                <button type="button" onclick="startGame('${game.id}')" class="flex-1 py-2 rounded-xl text-xs font-bold ${theme.btnPrimary} transition text-center">
+                                <button type="button" onclick="startGame('${escapeHtml(game.id)}')" class="flex-1 py-2 rounded-xl text-xs font-bold ${theme.btnPrimary} transition text-center">
                                     <i class="fa-solid fa-play mr-1"></i> Mainkan
                                 </button>
                             </div>
@@ -1423,7 +1469,7 @@
 
                     <div class="flex flex-wrap items-center gap-2">
                         ${categories.map(cat => `
-                            <button type="button" onclick="selectGameCategory('${escapeHtml(cat)}')"
+                            <button type="button" data-cat="${escapeHtml(cat)}" onclick="selectGameCategory(this.dataset.cat)"
                                 class="px-3.5 py-1.5 rounded-xl text-xs font-bold transition ${ui.gameCategoryFilter === cat ? getTheme().btnPrimary : 'bg-slate-900 text-slate-300 border border-slate-800 hover:border-slate-700'}">
                                 ${escapeHtml(cat)}
                             </button>
@@ -1495,6 +1541,7 @@
             const user = getCurrentUser();
             const coinLabel = game.coinName || ('Koin ' + game.title);
             const walletBal = user ? getUserGameCoins(user, game.id) : 0;
+            const safeEmbed = sanitizeSafeUrl(game.embedUrl, false);
 
             return `
                 <div class="w-full max-w-[98vw] mx-auto px-2 sm:px-4 py-4 space-y-4 animate-fade-in">
@@ -1516,23 +1563,25 @@
                                     <i class="fa-solid fa-coins mr-1"></i> ${walletBal.toLocaleString('id-ID')} ${escapeHtml(coinLabel)}
                                 </span>
                             ` : ''}
-                            <button type="button" onclick="navigateTo('topup', '${game.id}')" class="px-3.5 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-extrabold">
+                            <button type="button" onclick="navigateTo('topup', '${escapeHtml(game.id)}')" class="px-3.5 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-extrabold">
                                 <i class="fa-solid fa-plus mr-1"></i> Top-Up ${escapeHtml(coinLabel)}
                             </button>
-                            <button type="button" onclick="toggleChatOverlay(true)" class="px-3.5 py-2 rounded-xl bg-sky-500/15 border border-sky-500/30 text-sky-300 text-xs font-bold">
-                                <i class="fa-brands fa-telegram mr-1"></i> Chat Overlay
-                            </button>
+                            ${state.siteSettings.chatEnabled ? `
+                                <button type="button" onclick="toggleChatOverlay(true)" class="px-3.5 py-2 rounded-xl bg-sky-500/15 border border-sky-500/30 text-sky-300 text-xs font-bold">
+                                    <i class="fa-brands fa-telegram mr-1"></i> Chat Overlay
+                                </button>
+                            ` : ''}
                         </div>
                     </div>
 
                     <div class="w-full rounded-2xl sm:rounded-3xl bg-slate-900 border border-slate-800 overflow-hidden shadow-2xl">
-                        ${game.type === 'embed' && game.embedUrl ? `
+                        ${game.type === 'embed' && safeEmbed ? `
                             <div class="w-full h-[76vh] sm:h-[82vh] min-h-[540px] bg-black">
-                                <iframe id="activeGameIframe" src="${escapeHtml(game.embedUrl)}" class="w-full h-full border-0" allowfullscreen></iframe>
+                                <iframe id="activeGameIframe" src="${escapeHtml(safeEmbed)}" class="w-full h-full border-0" allow="autoplay; fullscreen; gamepad; clipboard-write" allowfullscreen></iframe>
                             </div>
                             <div class="p-4 bg-slate-950 border-t border-slate-800 flex items-center justify-between">
                                 <span class="text-xs text-slate-400">Selesai bermain? Klaim hadiah koin khusus game ini:</span>
-                                <button type="button" onclick="claimGameReward('${game.id}', 100)" class="px-4 py-2 rounded-xl text-xs font-bold ${theme.btnPrimary}">
+                                <button type="button" onclick="claimGameReward('${escapeHtml(game.id)}', 100)" class="px-4 py-2 rounded-xl text-xs font-bold ${theme.btnPrimary}">
                                     Klaim +${game.coinReward} ${escapeHtml(coinLabel)}
                                 </button>
                             </div>
@@ -1557,7 +1606,7 @@
                                             ${it.description ? `<div class="text-[10px] text-slate-400 truncate">${escapeHtml(it.description)}</div>` : ''}
                                             <div class="text-xs font-bold text-amber-400 mt-1">${Number(it.price || 0).toLocaleString('id-ID')} ${escapeHtml(coinLabel)}</div>
                                         </div>
-                                        <button type="button" onclick="purchaseDetectedGameItem('${game.id}', '${escapeHtml(it.id)}')"
+                                        <button type="button" data-gid="${escapeHtml(game.id)}" data-iid="${escapeHtml(it.id)}" onclick="purchaseDetectedGameItem(this.dataset.gid, this.dataset.iid)"
                                             class="px-3 py-2 rounded-xl ${theme.btnPrimary} text-xs font-bold shrink-0">
                                             Beli
                                         </button>
@@ -1572,7 +1621,7 @@
 
         function mountActiveGameEngine() {
             const game = state.games.find(g => g.id === ui.activeGameId) || state.games[0];
-            if (!game || game.type === 'embed') return;
+            if (!game || (game.type === 'embed' && sanitizeSafeUrl(game.embedUrl, false))) return;
             const mount = document.getElementById('builtinGameMount');
             if (!mount) return;
 
@@ -1716,6 +1765,8 @@
 
             function onKeyDown(e) {
                 if (e.shiftKey && e.key === 'Tab') return;
+                const tag = document.activeElement ? document.activeElement.tagName : '';
+                if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
                 if (['ArrowUp', 'w', 'W'].includes(e.key)) { e.preventDefault(); window.setSnakeDir(0, -1); }
                 if (['ArrowDown', 's', 'S'].includes(e.key)) { e.preventDefault(); window.setSnakeDir(0, 1); }
                 if (['ArrowLeft', 'a', 'A'].includes(e.key)) { e.preventDefault(); window.setSnakeDir(-1, 0); }
@@ -2012,8 +2063,10 @@
             };
 
             function onKey(e) {
-                if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') window.moveAsteroidPlayer(-24);
-                if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') window.moveAsteroidPlayer(24);
+                const tag = document.activeElement ? document.activeElement.tagName : '';
+                if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
+                if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') { e.preventDefault(); window.moveAsteroidPlayer(-24); }
+                if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') { e.preventDefault(); window.moveAsteroidPlayer(24); }
             }
 
             window.addEventListener('keydown', onKey);
@@ -2095,7 +2148,7 @@
                         </div>
                         <select onchange="selectLeaderboardGame(this.value)" class="rounded-xl bg-slate-900 border border-slate-800 px-3.5 py-2.5 text-xs font-bold text-white">
                             <option value="all" ${ui.leaderboardGameFilter === 'all' ? 'selected' : ''}>Semua Game</option>
-                            ${state.games.map(g => `<option value="${g.id}" ${ui.leaderboardGameFilter === g.id ? 'selected' : ''}>${escapeHtml(g.title)}</option>`).join('')}
+                            ${state.games.map(g => `<option value="${escapeHtml(g.id)}" ${ui.leaderboardGameFilter === g.id ? 'selected' : ''}>${escapeHtml(g.title)}</option>`).join('')}
                         </select>
                     </div>
 
@@ -2253,11 +2306,12 @@
                             ${state.games.map(g => {
                                 const isSel = g.id === ui.topupGameFilter;
                                 const gCoin = g.coinName || ('Koin ' + g.title);
+                                const safeThumb = sanitizeSafeUrl(g.thumbnailUrl, true);
                                 return `
-                                    <button type="button" onclick="selectTopupGameFilter('${g.id}')"
+                                    <button type="button" onclick="selectTopupGameFilter('${escapeHtml(g.id)}')"
                                         class="p-3.5 rounded-2xl border text-left flex items-center gap-3 transition ${isSel ? `bg-slate-950 ${theme.borderAccent} ring-2 ${theme.ringAccent}` : 'bg-slate-950/60 border-slate-800 hover:border-slate-700'}">
-                                        <div class="w-11 h-11 rounded-xl overflow-hidden bg-gradient-to-br ${g.gradient || 'from-indigo-600 to-slate-900'} flex items-center justify-center shrink-0">
-                                            ${g.thumbnailUrl ? `<img src="${escapeHtml(g.thumbnailUrl)}" class="w-full h-full object-cover">` : `<i class="fa-solid ${escapeHtml(g.icon || 'fa-gamepad')} text-white"></i>`}
+                                        <div class="w-11 h-11 rounded-xl overflow-hidden bg-gradient-to-br ${escapeHtml(g.gradient || 'from-indigo-600 to-slate-900')} flex items-center justify-center shrink-0">
+                                            ${safeThumb ? `<img src="${escapeHtml(safeThumb)}" class="w-full h-full object-cover">` : `<i class="fa-solid ${escapeHtml(g.icon || 'fa-gamepad')} text-white"></i>`}
                                         </div>
                                         <div class="min-w-0">
                                             <div class="text-xs font-extrabold text-white truncate">${escapeHtml(g.title)}</div>
@@ -2281,7 +2335,7 @@
                                         ${gamePackages.map(pkg => {
                                             const active = selectedPkg && selectedPkg.id === pkg.id;
                                             return `
-                                                <button type="button" onclick="selectTopupPackage('${pkg.id}')"
+                                                <button type="button" onclick="selectTopupPackage('${escapeHtml(pkg.id)}')"
                                                     class="p-4 rounded-2xl border text-left transition relative ${active ? `bg-slate-950 ${theme.borderAccent} ring-2 ${theme.ringAccent}` : 'bg-slate-950/60 border-slate-800 hover:border-slate-700'}">
                                                     ${pkg.tag ? `<span class="absolute top-3 right-3 px-2 py-0.5 rounded-lg bg-amber-500/20 text-amber-300 text-[10px] font-extrabold">${escapeHtml(pkg.tag)}</span>` : ''}
                                                     <div class="text-xs font-bold text-slate-400">${escapeHtml(pkg.name)}</div>
@@ -2308,7 +2362,7 @@
                                             const active = selectedPm && selectedPm.id === pm.id;
                                             const icon = pm.type === 'qris' ? 'fa-qrcode text-emerald-400' : pm.type === 'bank' ? 'fa-building-columns text-indigo-400' : 'fa-wallet text-amber-400';
                                             return `
-                                                <button type="button" onclick="selectTopupMethod('${pm.id}')"
+                                                <button type="button" onclick="selectTopupMethod('${escapeHtml(pm.id)}')"
                                                     class="w-full p-4 rounded-2xl border flex items-center justify-between gap-3 text-left transition ${active ? `bg-slate-950 ${theme.borderAccent} ring-2 ${theme.ringAccent}` : 'bg-slate-950/60 border-slate-800 hover:border-slate-700'}">
                                                     <div class="flex items-center gap-3">
                                                         <div class="w-10 h-10 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center text-lg">
@@ -2445,6 +2499,7 @@
             if (!modal) return;
             const txId = 'TRX-' + Math.floor(100000 + Math.random() * 900000);
             const coinLabel = activeGame.coinName || ('Koin ' + activeGame.title);
+            const safeQrisImg = sanitizeSafeUrl(cfg.qrisImageUrl, true);
 
             modal.innerHTML = `
                 <div class="w-full max-w-md rounded-3xl bg-slate-900 border border-slate-800 p-6 space-y-5 shadow-2xl animate-fade-in">
@@ -2475,8 +2530,8 @@
                                 <span class="text-rose-600">QRIS NASIONAL</span>
                                 <span class="text-slate-600">${escapeHtml(cfg.qrisMerchantName || 'GAMEZONE ID')}</span>
                             </div>
-                            ${cfg.qrisImageUrl ? `
-                                <img src="${escapeHtml(cfg.qrisImageUrl)}" alt="QRIS Merchant" class="w-56 h-56 mx-auto object-contain rounded-xl border border-slate-200">
+                            ${safeQrisImg ? `
+                                <img src="${escapeHtml(safeQrisImg)}" alt="QRIS Merchant" class="w-56 h-56 mx-auto object-contain rounded-xl border border-slate-200">
                             ` : `
                                 <svg viewBox="0 0 120 120" class="w-48 h-48 mx-auto">
                                     <rect width="120" height="120" fill="#ffffff"/>
@@ -2497,7 +2552,7 @@
                             <div class="text-slate-400">Tujuan Transfer (${escapeHtml(pm.name)}):</div>
                             <div class="flex items-center justify-between p-3 rounded-xl bg-slate-900 border border-slate-800">
                                 <span class="font-mono text-sm font-black text-white">${escapeHtml(pm.accountInfo)}</span>
-                                <button type="button" onclick="copyText('${escapeHtml(pm.accountInfo)}', 'Nomor tujuan')" class="px-2.5 py-1 rounded-lg bg-indigo-600 text-white font-bold">Salin</button>
+                                <button type="button" data-acc="${escapeHtml(pm.accountInfo)}" onclick="copyText(this.dataset.acc, 'Nomor tujuan')" class="px-2.5 py-1 rounded-lg bg-indigo-600 text-white font-bold">Salin</button>
                             </div>
                             <div class="text-slate-400">Atas Nama: <strong class="text-white">${escapeHtml(pm.accountHolder || 'GameZone ID')}</strong></div>
                         </div>
@@ -2875,7 +2930,7 @@
                                 return `
                                     <div class="p-4 rounded-2xl bg-slate-950 border border-slate-800 flex flex-col justify-between space-y-3">
                                         <div class="flex items-center gap-2.5">
-                                            <div class="w-9 h-9 rounded-xl bg-gradient-to-br ${g.gradient || 'from-indigo-600 to-slate-900'} flex items-center justify-center text-white text-sm shrink-0">
+                                            <div class="w-9 h-9 rounded-xl bg-gradient-to-br ${escapeHtml(g.gradient || 'from-indigo-600 to-slate-900')} flex items-center justify-center text-white text-sm shrink-0">
                                                 <i class="fa-solid ${escapeHtml(g.icon || 'fa-gamepad')}"></i>
                                             </div>
                                             <div class="min-w-0">
@@ -2885,7 +2940,7 @@
                                         </div>
                                         <div class="flex items-center justify-between pt-2 border-t border-slate-800/80">
                                             <span class="text-base font-black text-amber-400">${bal.toLocaleString('id-ID')}</span>
-                                            <button type="button" onclick="navigateTo('topup', '${g.id}')" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-[10px] font-bold text-slate-200">
+                                            <button type="button" onclick="navigateTo('topup', '${escapeHtml(g.id)}')" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-[10px] font-bold text-slate-200">
                                                 Isi Saldo
                                             </button>
                                         </div>
@@ -3516,13 +3571,13 @@
                                                     <span>${escapeHtml(msg.senderName)}</span>
                                                     ${msg.senderRole === 'admin' ? '<i class="fa-solid fa-circle-check text-[#38a3f1] text-[10px]"></i>' : ''}
                                                 </span>
-                                                <button type="button" onclick="setReplyTo('${msg.id}')" title="Balas" class="text-[#7f91a4] hover:text-white text-[10px]">
+                                                <button type="button" onclick="setReplyTo('${escapeHtml(msg.id)}')" title="Balas" class="text-[#7f91a4] hover:text-white text-[10px]">
                                                     <i class="fa-solid fa-reply"></i>
                                                 </button>
                                             </div>
                                         ` : `
                                             <div class="flex justify-end -mt-0.5 -mb-1">
-                                                <button type="button" onclick="setReplyTo('${msg.id}')" title="Balas" class="text-sky-200/60 hover:text-white text-[10px]">
+                                                <button type="button" onclick="setReplyTo('${escapeHtml(msg.id)}')" title="Balas" class="text-sky-200/60 hover:text-white text-[10px]">
                                                     <i class="fa-solid fa-reply"></i>
                                                 </button>
                                             </div>
@@ -3535,7 +3590,7 @@
                                         ` : ''}
                                         <div class="leading-relaxed break-words">${escapeHtml(msg.text)}</div>
                                         ${invGame ? `
-                                            <button type="button" onclick="startGame('${invGame.id}'); toggleChatOverlay(false);"
+                                            <button type="button" onclick="startGame('${escapeHtml(invGame.id)}'); toggleChatOverlay(false);"
                                                 class="w-full p-2.5 rounded-xl bg-black/30 hover:bg-black/45 border border-sky-400/30 text-left flex items-center justify-between gap-2 mt-1 transition">
                                                 <div>
                                                     <div class="text-[10px] text-[#64d2ff] font-bold uppercase">Undangan Mabar</div>
@@ -3547,9 +3602,9 @@
                                         <div class="flex items-center justify-between gap-2 pt-0.5 text-[10px]">
                                             <div class="flex items-center gap-1">
                                                 ${['🔥', '😂', '❤️'].map(em => `
-                                                    <button type="button" onclick="toggleReaction('${msg.id}', '${em}')" class="hover:scale-125 transition">${em}</button>
+                                                    <button type="button" onclick="toggleReaction('${escapeHtml(msg.id)}', '${em}')" class="hover:scale-125 transition">${em}</button>
                                                 `).join('')}
-                                                ${reactions.map(([em, cnt]) => `<span class="px-1.5 py-0.2 rounded-full bg-black/25 text-slate-200 font-semibold">${em} ${cnt}</span>`).join('')}
+                                                ${reactions.map(([em, cnt]) => `<span class="px-1.5 py-0.2 rounded-full bg-black/25 text-slate-200 font-semibold">${escapeHtml(em)} ${cnt}</span>`).join('')}
                                             </div>
                                             <span class="${isMine ? 'text-[#7eb8e8]' : 'text-[#6d7f92]'} font-mono text-[10px] ml-auto shrink-0">
                                                 ${escapeHtml(msg.time)} ${isMine ? '<i class="fa-solid fa-check-double text-[#5ec2ff] ml-0.5"></i>' : ''}
@@ -3602,7 +3657,7 @@
                     bodyListHtml = `
                         <div class="flex-1 overflow-y-auto divide-y divide-white/[0.04] bg-[#17212b]">
                             ${filteredThreads.map(t => `
-                                <button type="button" onclick="openChatThread('${t.id}')"
+                                <button type="button" onclick="openChatThread('${escapeHtml(t.id)}')"
                                     class="w-full px-3.5 py-2.5 hover:bg-[#202b36] transition flex items-center gap-3 text-left">
                                     <div class="relative shrink-0">
                                         ${t.id === 'global' ? `
@@ -3656,7 +3711,7 @@
                                         </div>
                                     </div>
                                     ${(!user || u.id !== user.id) ? `
-                                        <button type="button" onclick="openChatThread('${u.id}')" class="px-3 py-1.5 rounded-full bg-[#2b88d8] text-white text-[11px] font-bold shrink-0">
+                                        <button type="button" onclick="openChatThread('${escapeHtml(u.id)}')" class="px-3 py-1.5 rounded-full bg-[#2b88d8] text-white text-[11px] font-bold shrink-0">
                                             Chat
                                         </button>
                                     ` : `<span class="text-[10px] text-slate-400 px-2">Anda</span>`}
@@ -3947,17 +4002,23 @@
             const closeTag = '</' + 'script>';
             const lines = [
                 openTag,
-                '// GameZone ID - GameBridge SDK (Auto-Detect Item, Koin & Skor)',
+                '// GameZone ID - GameBridge SDK (Auto-Detect Item, Dompet & Pembelian Langsung)',
                 'window.GameZoneSDK = {',
                 '  registerMeta: function(meta) {',
                 '    window.parent.postMessage({ source: "GameZoneGame", type: "REGISTER_GAME_META", payload: meta }, "*");',
                 '  },',
+                '  getWallet: function() {',
+                '    window.parent.postMessage({ source: "GameZoneGame", type: "GET_WALLET" }, "*");',
+                '  },',
+                '  buyItem: function(itemId, price, itemName) {',
+                '    window.parent.postMessage({ source: "GameZoneGame", type: "BUY_ITEM", itemId: itemId, price: Number(price || 0), itemName: itemName || itemId }, "*");',
+                '  },',
                 '  reportScore: function(score) {',
                 '    window.parent.postMessage({ source: "GameZoneGame", type: "REPORT_SCORE", score: Number(score || 0) }, "*");',
                 '  },',
-                '  onItemGranted: function(callback) {',
+                '  onMessage: function(callback) {',
                 '    window.addEventListener("message", function(ev) {',
-                '      if (ev.data && ev.data.source === "GameZonePortal" && ev.data.type === "ITEM_GRANTED") {',
+                '      if (ev.data && ev.data.source === "GameZonePortal") {',
                 '        callback(ev.data);',
                 '      }',
                 '    });',
@@ -3971,6 +4032,13 @@
                 '    { id: "item_shield", name: "Perisai Plasma", price: 50, description: "Kebal 1x tabrakan" },',
                 '    { id: "item_double", name: "Skor 2x Lipat", price: 100, description: "Gandakan perolehan skor" }',
                 '  ]',
+                '});',
+                '// Meminta saldo dompet & mendengarkan hasil pembelian item:',
+                'window.GameZoneSDK.getWallet();',
+                'window.GameZoneSDK.onMessage(function(msg) {',
+                '  if (msg.type === "WALLET_INFO") console.log("Saldo koin:", msg.coins);',
+                '  if (msg.type === "ITEM_GRANTED") console.log("Item aktif:", msg.itemId, "Sisa:", msg.remainingCoins);',
+                '  if (msg.type === "PURCHASE_FAILED") alert(msg.reason);',
                 '});',
                 closeTag
             ];
@@ -3994,11 +4062,12 @@
                         ${state.games.map(g => {
                             const cName = g.coinName || ('Koin ' + g.title);
                             const pkgCount = state.topupConfig.packages.filter(p => p.gameId === g.id).length;
+                            const safeThumb = sanitizeSafeUrl(g.thumbnailUrl, true);
                             return `
                                 <div class="p-4 rounded-2xl bg-slate-900 border border-slate-800 flex items-center justify-between gap-4">
                                     <div class="flex items-center gap-3.5 min-w-0">
-                                        <div class="w-16 h-16 rounded-2xl overflow-hidden bg-gradient-to-br ${g.gradient || 'from-indigo-600 to-slate-900'} flex items-center justify-center shrink-0 border border-slate-700">
-                                            ${g.thumbnailUrl ? `<img src="${escapeHtml(g.thumbnailUrl)}" alt="${escapeHtml(g.title)}" class="w-full h-full object-cover">` : `<i class="fa-solid ${escapeHtml(g.icon || 'fa-gamepad')} text-2xl text-white"></i>`}
+                                        <div class="w-16 h-16 rounded-2xl overflow-hidden bg-gradient-to-br ${escapeHtml(g.gradient || 'from-indigo-600 to-slate-900')} flex items-center justify-center shrink-0 border border-slate-700">
+                                            ${safeThumb ? `<img src="${escapeHtml(safeThumb)}" alt="${escapeHtml(g.title)}" class="w-full h-full object-cover">` : `<i class="fa-solid ${escapeHtml(g.icon || 'fa-gamepad')} text-2xl text-white"></i>`}
                                         </div>
                                         <div class="min-w-0">
                                             <div class="text-sm font-extrabold text-white truncate">${escapeHtml(g.title)}</div>
@@ -4009,10 +4078,10 @@
                                         </div>
                                     </div>
                                     <div class="flex flex-col sm:flex-row items-center gap-2 shrink-0">
-                                        <button type="button" onclick="openGameModal('${g.id}')" class="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-bold text-white">
+                                        <button type="button" onclick="openGameModal('${escapeHtml(g.id)}')" class="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-bold text-white">
                                             Edit Game & Koin
                                         </button>
-                                        <button type="button" onclick="deleteGame('${g.id}')" class="px-3 py-2 rounded-xl bg-rose-500/15 hover:bg-rose-500/25 text-xs font-bold text-rose-300">
+                                        <button type="button" onclick="deleteGame('${escapeHtml(g.id)}')" class="px-3 py-2 rounded-xl bg-rose-500/15 hover:bg-rose-500/25 text-xs font-bold text-rose-300">
                                             Hapus
                                         </button>
                                     </div>
@@ -4026,7 +4095,7 @@
 
         function openGameModal(gameId) {
             const game = gameId ? state.games.find(g => g.id === gameId) : null;
-            ui.gameModalThumbData = game ? (game.thumbnailUrl || '') : '';
+            ui.gameModalThumbData = game ? sanitizeSafeUrl(game.thumbnailUrl, true) : '';
             const modal = document.getElementById('gameModal');
             if (!modal) return;
             const gamePackages = game ? state.topupConfig.packages.filter(p => p.gameId === game.id) : [];
@@ -4038,10 +4107,10 @@
                         <button type="button" onclick="closeGameModal()" class="w-8 h-8 rounded-xl bg-slate-800 text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
                     </div>
 
-                    <form onsubmit="handleSaveGame(event, ${game ? `'${game.id}'` : 'null'})" class="space-y-4">
+                    <form onsubmit="handleSaveGame(event, ${game ? `'${escapeHtml(game.id)}'` : 'null'})" class="space-y-4">
                         <div class="p-4 rounded-2xl bg-slate-950 border border-slate-800 space-y-3">
                             <div class="text-xs font-bold text-amber-300">Thumbnail Banner Game (Live Preview)</div>
-                            <div id="gameThumbPreviewBox" class="h-32 w-full rounded-2xl overflow-hidden bg-gradient-to-br ${game ? game.gradient : 'from-indigo-600 to-purple-900'} flex items-center justify-center border border-slate-800">
+                            <div id="gameThumbPreviewBox" class="h-32 w-full rounded-2xl overflow-hidden bg-gradient-to-br ${escapeHtml(game ? game.gradient : 'from-indigo-600 to-purple-900')} flex items-center justify-center border border-slate-800">
                                 ${ui.gameModalThumbData ? `<img src="${escapeHtml(ui.gameModalThumbData)}" class="w-full h-full object-cover">` : `<i class="fa-solid ${escapeHtml(game ? game.icon : 'fa-gamepad')} text-4xl text-white"></i>`}
                             </div>
                             <div class="flex flex-wrap items-center gap-2">
@@ -4101,9 +4170,9 @@
                                     <div class="text-[11px] font-bold text-slate-300">Edit Cepat Paket Top-Up Game Ini:</div>
                                     ${gamePackages.map(pkg => `
                                         <div class="grid grid-cols-3 gap-2 items-center bg-slate-950 p-2 rounded-xl border border-slate-800">
-                                            <input type="text" value="${escapeHtml(pkg.name)}" onchange="updateInlinePackage('${pkg.id}', 'name', this.value)" class="rounded-lg bg-slate-900 border border-slate-800 px-2 py-1 text-xs text-white">
-                                            <input type="number" value="${pkg.coins}" onchange="updateInlinePackage('${pkg.id}', 'coins', Number(this.value))" class="rounded-lg bg-slate-900 border border-slate-800 px-2 py-1 text-xs text-amber-300">
-                                            <input type="number" value="${pkg.price}" onchange="updateInlinePackage('${pkg.id}', 'price', Number(this.value))" class="rounded-lg bg-slate-900 border border-slate-800 px-2 py-1 text-xs text-emerald-300">
+                                            <input type="text" value="${escapeHtml(pkg.name)}" onchange="updateInlinePackage('${escapeHtml(pkg.id)}', 'name', this.value)" class="rounded-lg bg-slate-900 border border-slate-800 px-2 py-1 text-xs text-white">
+                                            <input type="number" value="${pkg.coins}" onchange="updateInlinePackage('${escapeHtml(pkg.id)}', 'coins', Number(this.value))" class="rounded-lg bg-slate-900 border border-slate-800 px-2 py-1 text-xs text-amber-300">
+                                            <input type="number" value="${pkg.price}" onchange="updateInlinePackage('${escapeHtml(pkg.id)}', 'price', Number(this.value))" class="rounded-lg bg-slate-900 border border-slate-800 px-2 py-1 text-xs text-emerald-300">
                                         </div>
                                     `).join('')}
                                 </div>
@@ -4181,9 +4250,10 @@
             if (!box) return;
             const icon = document.getElementById('gmIcon')?.value || 'fa-gamepad';
             const grad = document.getElementById('gmGrad')?.value || 'from-indigo-600 to-purple-900';
-            box.className = `h-32 w-full rounded-2xl overflow-hidden bg-gradient-to-br ${grad} flex items-center justify-center border border-slate-800`;
-            if (ui.gameModalThumbData) {
-                box.innerHTML = `<img src="${escapeHtml(ui.gameModalThumbData)}" class="w-full h-full object-cover">`;
+            const safePreview = sanitizeSafeUrl(ui.gameModalThumbData, true);
+            box.className = `h-32 w-full rounded-2xl overflow-hidden bg-gradient-to-br ${escapeHtml(grad)} flex items-center justify-center border border-slate-800`;
+            if (safePreview) {
+                box.innerHTML = `<img src="${escapeHtml(safePreview)}" class="w-full h-full object-cover">`;
             } else {
                 box.innerHTML = `<i class="fa-solid ${escapeHtml(icon)} text-4xl text-white"></i>`;
             }
@@ -4193,7 +4263,8 @@
             const val = String(raw || '').trim();
             if (!val) return '';
             const match = val.match(/<iframe[^>]*\bsrc\s*=\s*["']([^"']+)["']/i);
-            return match ? match[1].trim() : val;
+            const candidate = match ? match[1].trim() : val;
+            return sanitizeSafeUrl(candidate, false);
         }
 
         function handleSaveGame(e, gameId) {
@@ -4206,9 +4277,15 @@
             const playCost = Number(document.getElementById('gmPlayCost').value || 0);
             const icon = document.getElementById('gmIcon').value.trim() || 'fa-gamepad';
             const gradient = document.getElementById('gmGrad').value;
-            const thumbnailUrl = document.getElementById('gmThumbUrl').value.trim();
+            const thumbnailUrl = sanitizeSafeUrl(document.getElementById('gmThumbUrl').value.trim(), true);
             const embedEl = document.getElementById('gmEmbedUrl');
-            const embedUrl = embedEl ? extractEmbedUrlFromInput(embedEl.value) : '';
+            const rawEmbed = embedEl ? embedEl.value.trim() : '';
+            const embedUrl = embedEl ? extractEmbedUrlFromInput(rawEmbed) : '';
+
+            if (rawEmbed && !embedUrl) {
+                showToast('URL Embed harus diawali http:// atau https://', 'warning');
+                return;
+            }
 
             if (gameId) {
                 const g = state.games.find(x => x.id === gameId);
@@ -4272,6 +4349,8 @@
             }
             state.games = state.games.filter(g => g.id !== gameId);
             state.topupConfig.packages = state.topupConfig.packages.filter(p => p.gameId !== gameId);
+            if (ui.topupGameFilter === gameId) ui.topupGameFilter = state.games[0].id;
+            if (ui.adminPkgGameFilter === gameId) ui.adminPkgGameFilter = state.games[0].id;
             saveState();
             showToast('Game & paket koin terkait berhasil dihapus.', 'info');
             renderApp();
@@ -4411,8 +4490,8 @@
                                         <div class="text-xs text-slate-400 line-clamp-1">${escapeHtml(cp.content)}</div>
                                     </div>
                                     <div class="flex items-center gap-2">
-                                        <button type="button" onclick="openCustomPageModal('${cp.id}')" class="px-3 py-1.5 rounded-xl bg-slate-800 text-xs font-bold text-white">Edit</button>
-                                        <button type="button" onclick="deleteCustomPage('${cp.id}')" class="px-3 py-1.5 rounded-xl bg-rose-500/15 text-xs font-bold text-rose-300">Hapus</button>
+                                        <button type="button" onclick="openCustomPageModal('${escapeHtml(cp.id)}')" class="px-3 py-1.5 rounded-xl bg-slate-800 text-xs font-bold text-white">Edit</button>
+                                        <button type="button" onclick="deleteCustomPage('${escapeHtml(cp.id)}')" class="px-3 py-1.5 rounded-xl bg-rose-500/15 text-xs font-bold text-rose-300">Hapus</button>
                                     </div>
                                 </div>
                             `).join('')}
@@ -4488,7 +4567,7 @@
                         <h3 class="text-lg font-black text-white">${cp ? 'Edit Halaman Kustom' : 'Buat Halaman Kustom'}</h3>
                         <button type="button" onclick="closeCustomPageModal()" class="w-8 h-8 rounded-xl bg-slate-800 text-slate-400"><i class="fa-solid fa-xmark"></i></button>
                     </div>
-                    <form onsubmit="handleSaveCustomPage(event, ${cp ? `'${cp.id}'` : 'null'})" class="space-y-3">
+                    <form onsubmit="handleSaveCustomPage(event, ${cp ? `'${escapeHtml(cp.id)}'` : 'null'})" class="space-y-3">
                         <div>
                             <label class="block text-xs font-semibold text-slate-400 uppercase mb-1">Judul Halaman</label>
                             <input id="cpTitle" type="text" required value="${escapeHtml(cp ? cp.title : '')}" class="w-full rounded-xl bg-slate-950 border border-slate-800 px-3.5 py-2 text-sm text-white">
@@ -4564,6 +4643,7 @@
             const selectedFilterGame = state.games.find(g => g.id === ui.adminPkgGameFilter) || state.games[0];
             if (selectedFilterGame) ui.adminPkgGameFilter = selectedFilterGame.id;
             const filteredPackages = cfg.packages.filter(p => p.gameId === ui.adminPkgGameFilter);
+            const safeQrisPreview = sanitizeSafeUrl(cfg.qrisImageUrl, true);
 
             return `
                 <div class="space-y-6">
@@ -4602,8 +4682,8 @@
                             <div class="grid grid-cols-1 md:grid-cols-12 gap-3 items-center">
                                 <div class="md:col-span-3 flex justify-center">
                                     <div class="w-24 h-24 rounded-xl bg-white p-1.5 flex items-center justify-center border border-slate-700 overflow-hidden">
-                                        ${cfg.qrisImageUrl ? `
-                                            <img src="${escapeHtml(cfg.qrisImageUrl)}" alt="Preview QRIS" class="w-full h-full object-contain">
+                                        ${safeQrisPreview ? `
+                                            <img src="${escapeHtml(safeQrisPreview)}" alt="Preview QRIS" class="w-full h-full object-contain">
                                         ` : `
                                             <div class="text-center text-slate-800">
                                                 <i class="fa-solid fa-qrcode text-3xl"></i>
@@ -4620,7 +4700,7 @@
                                         </div>
                                         <div>
                                             <label class="block text-[10px] font-semibold text-slate-400 uppercase mb-1">URL Gambar QRIS (Opsional)</label>
-                                            <input id="tuQrisImageUrl" type="text" value="${escapeHtml(cfg.qrisImageUrl || '')}" placeholder="https://... atau upload file" class="w-full rounded-xl bg-slate-900 border border-slate-800 px-3 py-2 text-xs text-white">
+                                            <input id="tuQrisImageUrl" type="text" value="${escapeHtml(safeQrisPreview)}" placeholder="https://... atau upload file" class="w-full rounded-xl bg-slate-900 border border-slate-800 px-3 py-2 text-xs text-white">
                                         </div>
                                     </div>
                                     <div class="flex flex-wrap items-center gap-2">
@@ -4628,7 +4708,7 @@
                                             <i class="fa-solid fa-upload mr-1"></i> Upload Gambar Barcode QRIS
                                             <input type="file" accept="image/*" onchange="handleQrisImageUpload(event)" class="hidden">
                                         </label>
-                                        ${cfg.qrisImageUrl ? `
+                                        ${safeQrisPreview ? `
                                             <button type="button" onclick="clearQrisImage()" class="px-3 py-2 rounded-xl bg-rose-500/15 hover:bg-rose-500/25 text-rose-300 text-xs font-bold">
                                                 <i class="fa-solid fa-trash mr-1"></i> Hapus QRIS Kustom
                                             </button>
@@ -4716,13 +4796,13 @@
                                 <p class="text-xs text-slate-400">Pilih game untuk mengedit paket yang ada atau menambahkan paket nominal baru khusus game tersebut.</p>
                             </div>
                             <select onchange="ui.adminPkgGameFilter = this.value; renderApp();" class="rounded-xl bg-slate-950 border border-amber-500/40 px-3.5 py-2 text-xs font-bold text-amber-300">
-                                ${state.games.map(g => `<option value="${g.id}" ${ui.adminPkgGameFilter === g.id ? 'selected' : ''}>${escapeHtml(g.title)} (${escapeHtml(g.coinName || 'Koin')})</option>`).join('')}
+                                ${state.games.map(g => `<option value="${escapeHtml(g.id)}" ${ui.adminPkgGameFilter === g.id ? 'selected' : ''}>${escapeHtml(g.title)} (${escapeHtml(g.coinName || 'Koin')})</option>`).join('')}
                             </select>
                         </div>
 
                         <form onsubmit="handleAddTopupPackage(event)" class="grid grid-cols-1 sm:grid-cols-7 gap-2.5 p-4 rounded-2xl bg-slate-950 border border-slate-800">
                             <select id="newPkgGameId" class="rounded-xl bg-slate-900 border border-slate-800 px-3 py-2 text-xs text-amber-300 font-bold">
-                                ${state.games.map(g => `<option value="${g.id}" ${ui.adminPkgGameFilter === g.id ? 'selected' : ''}>${escapeHtml(g.title)}</option>`).join('')}
+                                ${state.games.map(g => `<option value="${escapeHtml(g.id)}" ${ui.adminPkgGameFilter === g.id ? 'selected' : ''}>${escapeHtml(g.title)}</option>`).join('')}
                             </select>
                             <input id="newPkgName" type="text" required placeholder="Nama Paket" class="rounded-xl bg-slate-900 border border-slate-800 px-3 py-2 text-xs text-white">
                             <input id="newPkgTag" type="text" placeholder="Tag (mis: Populer)" class="rounded-xl bg-slate-900 border border-slate-800 px-3 py-2 text-xs text-white">
@@ -4739,26 +4819,26 @@
                                 return `
                                     <div class="p-4 rounded-2xl bg-slate-950 border border-slate-800 space-y-2.5">
                                         <div class="flex items-center justify-between gap-2">
-                                            <input type="text" value="${escapeHtml(pkg.name)}" onchange="updateInlinePackage('${pkg.id}', 'name', this.value)"
+                                            <input type="text" value="${escapeHtml(pkg.name)}" onchange="updateInlinePackage('${escapeHtml(pkg.id)}', 'name', this.value)"
                                                 class="flex-1 rounded-lg bg-slate-900 border border-slate-800 px-2.5 py-1 text-xs font-bold text-white">
-                                            <input type="text" value="${escapeHtml(pkg.tag || '')}" placeholder="Tag" onchange="updateInlinePackage('${pkg.id}', 'tag', this.value)"
+                                            <input type="text" value="${escapeHtml(pkg.tag || '')}" placeholder="Tag" onchange="updateInlinePackage('${escapeHtml(pkg.id)}', 'tag', this.value)"
                                                 class="w-20 rounded-lg bg-slate-900 border border-slate-800 px-2 py-1 text-[11px] text-amber-300 font-bold">
-                                            <button type="button" onclick="deleteTopupPackage('${pkg.id}')" class="text-xs text-rose-400 hover:underline shrink-0">Hapus</button>
+                                            <button type="button" onclick="deleteTopupPackage('${escapeHtml(pkg.id)}')" class="text-xs text-rose-400 hover:underline shrink-0">Hapus</button>
                                         </div>
                                         <div class="grid grid-cols-3 gap-2 text-[11px]">
                                             <div>
                                                 <span class="text-slate-500 block">Koin</span>
-                                                <input type="number" value="${pkg.coins}" onchange="updateInlinePackage('${pkg.id}', 'coins', Number(this.value))"
+                                                <input type="number" value="${pkg.coins}" onchange="updateInlinePackage('${escapeHtml(pkg.id)}', 'coins', Number(this.value))"
                                                     class="w-full rounded-lg bg-slate-900 border border-slate-800 px-2 py-1 text-amber-400 font-bold">
                                             </div>
                                             <div>
                                                 <span class="text-slate-500 block">Bonus</span>
-                                                <input type="number" value="${pkg.bonus}" onchange="updateInlinePackage('${pkg.id}', 'bonus', Number(this.value))"
+                                                <input type="number" value="${pkg.bonus}" onchange="updateInlinePackage('${escapeHtml(pkg.id)}', 'bonus', Number(this.value))"
                                                     class="w-full rounded-lg bg-slate-900 border border-slate-800 px-2 py-1 text-emerald-400 font-bold">
                                             </div>
                                             <div>
                                                 <span class="text-slate-500 block">Harga (Rp)</span>
-                                                <input type="number" value="${pkg.price}" onchange="updateInlinePackage('${pkg.id}', 'price', Number(this.value))"
+                                                <input type="number" value="${pkg.price}" onchange="updateInlinePackage('${escapeHtml(pkg.id)}', 'price', Number(this.value))"
                                                     class="w-full rounded-lg bg-slate-900 border border-slate-800 px-2 py-1 text-white font-bold">
                                             </div>
                                         </div>
@@ -4795,25 +4875,25 @@
                                 <div class="p-4 rounded-2xl bg-slate-950 border border-slate-800 grid grid-cols-1 md:grid-cols-12 gap-3 items-center">
                                     <div class="md:col-span-4">
                                         <span class="text-[10px] uppercase font-bold text-slate-500 block">Nama Metode (${escapeHtml(pm.type)})</span>
-                                        <input type="text" value="${escapeHtml(pm.name)}" onchange="updatePaymentMethod('${pm.id}', 'name', this.value)"
+                                        <input type="text" value="${escapeHtml(pm.name)}" onchange="updatePaymentMethod('${escapeHtml(pm.id)}', 'name', this.value)"
                                             class="w-full mt-0.5 rounded-lg bg-slate-900 border border-slate-800 px-2.5 py-1.5 text-xs font-bold text-white">
                                     </div>
                                     <div class="md:col-span-3">
                                         <span class="text-[10px] uppercase font-bold text-slate-500 block">No. Rekening / Info</span>
-                                        <input type="text" value="${escapeHtml(pm.accountInfo)}" onchange="updatePaymentMethod('${pm.id}', 'accountInfo', this.value)"
+                                        <input type="text" value="${escapeHtml(pm.accountInfo)}" onchange="updatePaymentMethod('${escapeHtml(pm.id)}', 'accountInfo', this.value)"
                                             class="w-full mt-0.5 rounded-lg bg-slate-900 border border-slate-800 px-2.5 py-1.5 text-xs font-mono text-amber-300">
                                     </div>
                                     <div class="md:col-span-3">
                                         <span class="text-[10px] uppercase font-bold text-slate-500 block">Atas Nama</span>
-                                        <input type="text" value="${escapeHtml(pm.accountHolder || '')}" onchange="updatePaymentMethod('${pm.id}', 'accountHolder', this.value)"
+                                        <input type="text" value="${escapeHtml(pm.accountHolder || '')}" onchange="updatePaymentMethod('${escapeHtml(pm.id)}', 'accountHolder', this.value)"
                                             class="w-full mt-0.5 rounded-lg bg-slate-900 border border-slate-800 px-2.5 py-1.5 text-xs text-slate-200">
                                     </div>
                                     <div class="md:col-span-2 flex items-center justify-end gap-2 pt-3 md:pt-0">
                                         <label class="flex items-center gap-1.5 text-xs font-bold ${pm.enabled ? 'text-emerald-400' : 'text-slate-500'} cursor-pointer">
-                                            <input type="checkbox" ${pm.enabled ? 'checked' : ''} onchange="updatePaymentMethod('${pm.id}', 'enabled', this.checked)">
+                                            <input type="checkbox" ${pm.enabled ? 'checked' : ''} onchange="updatePaymentMethod('${escapeHtml(pm.id)}', 'enabled', this.checked)">
                                             <span>Aktif</span>
                                         </label>
-                                        <button type="button" onclick="deletePaymentMethod('${pm.id}')" class="px-2.5 py-1.5 rounded-lg bg-rose-500/15 hover:bg-rose-500/25 text-rose-300 text-xs font-bold">
+                                        <button type="button" onclick="deletePaymentMethod('${escapeHtml(pm.id)}')" class="px-2.5 py-1.5 rounded-lg bg-rose-500/15 hover:bg-rose-500/25 text-rose-300 text-xs font-bold">
                                             <i class="fa-solid fa-trash"></i>
                                         </button>
                                     </div>
@@ -4857,13 +4937,13 @@
                                                 <td class="px-4 py-3">
                                                     ${tx.status === 'pending' ? `
                                                         <div class="flex items-center gap-2">
-                                                            <button type="button" onclick="approveTransaction('${tx.id}')" class="px-3 py-1 rounded-lg bg-emerald-600 text-white font-bold">ACC</button>
-                                                            <button type="button" onclick="rejectTransaction('${tx.id}')" class="px-3 py-1 rounded-lg bg-rose-600 text-white font-bold">Tolak</button>
+                                                            <button type="button" onclick="approveTransaction('${escapeHtml(tx.id)}')" class="px-3 py-1 rounded-lg bg-emerald-600 text-white font-bold">ACC</button>
+                                                            <button type="button" onclick="rejectTransaction('${escapeHtml(tx.id)}')" class="px-3 py-1 rounded-lg bg-rose-600 text-white font-bold">Tolak</button>
                                                         </div>
                                                     ` : tx.status === 'awaiting_callback' ? `
                                                         <div class="flex items-center gap-2">
                                                             <span class="text-cyan-400 font-bold">Menunggu Webhook</span>
-                                                            <button type="button" onclick="markGatewayCallbackPaid('${tx.id}')" class="px-2.5 py-1 rounded-lg bg-cyan-600 text-white font-bold">Konfirmasi PAID</button>
+                                                            <button type="button" onclick="markGatewayCallbackPaid('${escapeHtml(tx.id)}')" class="px-2.5 py-1 rounded-lg bg-cyan-600 text-white font-bold">Konfirmasi PAID</button>
                                                         </div>
                                                     ` : tx.status === 'success' ? `<span class="text-emerald-400 font-bold">Disetujui</span>` : `<span class="text-rose-400 font-bold">Ditolak</span>`}
                                                 </td>
@@ -4951,7 +5031,7 @@
             cfg.qrisDisplayEnabled = document.getElementById('tuQrisDisplay').checked;
             cfg.qrisNmid = document.getElementById('tuQrisNmid').value.trim();
             const qrisImgInput = document.getElementById('tuQrisImageUrl');
-            if (qrisImgInput) cfg.qrisImageUrl = qrisImgInput.value.trim();
+            if (qrisImgInput) cfg.qrisImageUrl = sanitizeSafeUrl(qrisImgInput.value.trim(), true);
 
             cfg.paymentGateway = {
                 ...cfg.paymentGateway,
@@ -5073,7 +5153,7 @@
                                         <td class="px-4 py-3 font-extrabold text-amber-400">${getUserTotalCoins(u).toLocaleString('id-ID')}</td>
                                         <td class="px-4 py-3">${renderPresenceBadge(u.presenceStatus, true)}</td>
                                         <td class="px-4 py-3">
-                                            <button type="button" onclick="openAdminEditUserModal('${u.id}')" class="px-3 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold">
+                                            <button type="button" onclick="openAdminEditUserModal('${escapeHtml(u.id)}')" class="px-3 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold">
                                                 Edit Profil & Koin Game
                                             </button>
                                         </td>
@@ -5107,7 +5187,7 @@
                         <h3 class="text-lg font-black text-white">Edit Pengguna & Dompet Koin Game</h3>
                         <button type="button" onclick="closeAdminUserModal()" class="w-8 h-8 rounded-xl bg-slate-800 text-slate-400"><i class="fa-solid fa-xmark"></i></button>
                     </div>
-                    <form onsubmit="handleAdminSaveUser(event, '${u.id}')" class="space-y-3">
+                    <form onsubmit="handleAdminSaveUser(event, '${escapeHtml(u.id)}')" class="space-y-3">
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                             <div>
                                 <label class="block text-xs font-semibold text-slate-400 uppercase mb-1">Nickname</label>
@@ -5137,7 +5217,7 @@
                             ${state.games.map(g => `
                                 <div class="flex items-center justify-between gap-3">
                                     <span class="text-xs text-slate-300 truncate">${escapeHtml(g.title)} (${escapeHtml(g.coinName || 'Koin')})</span>
-                                    <input id="admWallet_${g.id}" type="number" min="0" value="${getUserGameCoins(u, g.id)}"
+                                    <input id="admWallet_${escapeHtml(g.id)}" type="number" min="0" value="${getUserGameCoins(u, g.id)}"
                                         class="w-28 rounded-lg bg-slate-900 border border-slate-800 px-2.5 py-1 text-xs font-bold text-amber-400 text-right">
                                 </div>
                             `).join('')}
@@ -5185,6 +5265,7 @@
         function renderAdminSiteTab() {
             const s = state.siteSettings;
             const themeKeys = Object.keys(THEMES);
+            const safeFavPreview = sanitizeSafeUrl(s.faviconUrl || s.logoUrl, true) || DEFAULT_EAGLE_FAVICON_URI;
 
             return `
                 <form onsubmit="handleSaveSiteSettings(event)" class="p-6 rounded-3xl bg-slate-900 border border-slate-800 space-y-6">
@@ -5221,7 +5302,7 @@
                         <div class="p-4 rounded-2xl bg-slate-950 border border-slate-800 space-y-3">
                             <div class="text-xs font-bold text-amber-300">Favicon Tab Browser</div>
                             <div class="flex items-center gap-3">
-                                <img src="${escapeHtml(s.faviconUrl || s.logoUrl || DEFAULT_EAGLE_FAVICON_URI)}" alt="Favicon" class="w-12 h-12 rounded-xl object-cover border border-slate-700 bg-slate-900">
+                                <img src="${escapeHtml(safeFavPreview)}" alt="Favicon" class="w-12 h-12 rounded-xl object-cover border border-slate-700 bg-slate-900">
                                 <div class="flex flex-wrap gap-2">
                                     <label class="cursor-pointer px-3 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-extrabold">
                                         <i class="fa-solid fa-upload mr-1"></i> Upload Favicon
@@ -5333,6 +5414,9 @@
             state.siteSettings.siteName = document.getElementById('siteNameInput').value.trim();
             state.siteSettings.tagline = document.getElementById('siteTaglineInput').value.trim();
             state.siteSettings.chatEnabled = document.getElementById('siteChatEnabled').checked;
+            if (!state.siteSettings.chatEnabled) {
+                ui.chatOpen = false;
+            }
             const scriptInp = document.getElementById('siteAppsScriptUrlInput');
             if (scriptInp) {
                 state.siteSettings.appsScriptUrl = scriptInp.value.trim();
@@ -5374,7 +5458,7 @@
         }
 
         // =========================================================================
-        // 14. LISTENER GLOBAL (GAMEBRIDGE SDK, SHIFT + TAB & PELACAKAN AKTIVITAS)
+        // 14. LISTENER GLOBAL (GAMEBRIDGE SDK, SHIFT + TAB, ESC & AKTIVITAS)
         // =========================================================================
         window.addEventListener('message', (event) => {
             const data = event.data;
@@ -5382,6 +5466,13 @@
 
             const activeGame = state.games.find(g => g.id === ui.activeGameId);
             if (!activeGame) return;
+
+            const sendToGame = (payload) => {
+                const iframe = document.getElementById('activeGameIframe');
+                if (iframe && iframe.contentWindow) {
+                    iframe.contentWindow.postMessage({ source: 'GameZonePortal', gameId: activeGame.id, ...payload }, '*');
+                }
+            };
 
             if (data.type === 'REGISTER_GAME_META' && data.payload) {
                 const meta = data.payload;
@@ -5405,6 +5496,57 @@
                     showToast(`SDK terdeteksi: ${activeGame.detectedItems?.length || 0} item dari "${activeGame.title}" dimuat otomatis!`, 'success');
                     if (ui.currentPage === 'play') renderApp();
                 }
+            } else if (data.type === 'GET_WALLET') {
+                const user = getCurrentUser();
+                const coinLabel = activeGame.coinName || ('Koin ' + activeGame.title);
+                sendToGame({
+                    type: 'WALLET_INFO',
+                    loggedIn: Boolean(user),
+                    userName: user ? user.name : null,
+                    coinName: coinLabel,
+                    coins: user ? getUserGameCoins(user, activeGame.id) : 0
+                });
+            } else if (data.type === 'BUY_ITEM') {
+                const user = getCurrentUser();
+                const coinLabel = activeGame.coinName || ('Koin ' + activeGame.title);
+                if (!user) {
+                    const reason = `Silakan masuk akun portal untuk membeli item memakai ${coinLabel}.`;
+                    showToast(reason, 'warning');
+                    sendToGame({ type: 'PURCHASE_FAILED', itemId: data.itemId, reason });
+                    openAuthModal('login');
+                    return;
+                }
+
+                const registeredItem = Array.isArray(activeGame.detectedItems)
+                    ? activeGame.detectedItems.find(x => String(x.id) === String(data.itemId))
+                    : null;
+                const cost = registeredItem ? Number(registeredItem.price || 0) : Math.max(0, Number(data.price || 0));
+                const itemName = registeredItem ? registeredItem.name : String(data.itemName || data.itemId || 'Item Game');
+                const currentBal = getUserGameCoins(user, activeGame.id);
+
+                if (cost <= 0) {
+                    const reason = 'Harga item tidak valid.';
+                    sendToGame({ type: 'PURCHASE_FAILED', itemId: data.itemId, reason });
+                    return;
+                }
+
+                if (currentBal < cost) {
+                    const reason = `Saldo ${coinLabel} (${currentBal}) tidak cukup untuk membeli ${itemName} (${cost}).`;
+                    showToast(reason, 'error');
+                    sendToGame({ type: 'PURCHASE_FAILED', itemId: data.itemId, reason, remainingCoins: currentBal });
+                    return;
+                }
+
+                user.gameWallets[activeGame.id] = currentBal - cost;
+                saveState();
+                showToast(`Pembelian in-game "${itemName}" (-${cost} ${coinLabel}) berhasil!`, 'success');
+                sendToGame({
+                    type: 'ITEM_GRANTED',
+                    itemId: data.itemId,
+                    itemName,
+                    remainingCoins: user.gameWallets[activeGame.id]
+                });
+                if (ui.currentPage === 'play') renderApp();
             } else if (data.type === 'REPORT_SCORE' && typeof data.score === 'number') {
                 claimGameReward(activeGame.id, data.score);
             }
@@ -5414,6 +5556,10 @@
             if (e.shiftKey && e.key === 'Tab') {
                 e.preventDefault();
                 toggleChatOverlay();
+            }
+            if (e.key === 'Escape') {
+                closeAllModals();
+                if (ui.chatOpen) toggleChatOverlay(false);
             }
             recordUserActivity();
         });
