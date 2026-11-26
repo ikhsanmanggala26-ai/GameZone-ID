@@ -5433,6 +5433,7 @@
         syncAllUsersPresence();
         portalIdleCheckInterval = setInterval(checkPortalIdleStatus, 15000);
         if (window.AppsScriptBackend) window.AppsScriptBackend.start();
+        window.AppsScriptBackend.pullNow(true);
         renderApp();
     </script>
 </body>
