@@ -439,12 +439,12 @@
                                     <option value="Strategi">Kategori: Strategi</option>
                                 </select>
                                 <select id="admin-game-type" onchange="toggleAdminSourceField(this.value)" class="px-4 py-2.5 rounded-2xl bg-slate-100 dark:bg-slate-800 text-sm outline-none">
-                                    <option value="url">Tipe Sumber: URL Game (HTTPS)</option>
+                                    <option value="url">Tipe Sumber: URL Game (HTTPS / iFrame)</option>
                                     <option value="html">Tipe Sumber: Kode HTML Lengkap</option>
                                 </select>
-                                <input id="admin-game-thumb" type="url" placeholder="URL Thumbnail (Opsional)" class="px-4 py-2.5 rounded-2xl bg-slate-100 dark:bg-slate-800 text-sm outline-none">
+                                <input id="admin-game-thumb" type="text" placeholder="URL Thumbnail (Opsional)" class="px-4 py-2.5 rounded-2xl bg-slate-100 dark:bg-slate-800 text-sm outline-none">
                                 <div class="md:col-span-2">
-                                    <input id="admin-game-url" type="text" placeholder="Masukkan URL Game HTTPS (misal: https://...)" class="w-full px-4 py-2.5 rounded-2xl bg-slate-100 dark:bg-slate-800 text-sm outline-none">
+                                    <input id="admin-game-url" type="text" placeholder="Masukkan URL Game HTTPS atau tempel tag <iframe src='...'></iframe>" class="w-full px-4 py-2.5 rounded-2xl bg-slate-100 dark:bg-slate-800 text-sm outline-none">
                                     <textarea id="admin-game-html" rows="5" placeholder="Tempel kode HTML lengkap game di sini..." class="hidden w-full px-4 py-2.5 rounded-2xl bg-slate-100 dark:bg-slate-800 text-xs font-mono outline-none"></textarea>
                                 </div>
                                 <div class="md:col-span-2 flex flex-wrap items-center justify-between gap-3">
@@ -1136,6 +1136,15 @@ window.addEventListener('message',e=>{const m=e.data||{};if(m.type==='GZ_PURCHAS
             }
         }
 
+        function escapeHtml(str) {
+            return String(str ?? '')
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
         // ==================== HELPER & UTILITAS ====================
         function formatRupiah(num) {
             return 'Rp ' + Number(num || 0).toLocaleString('id-ID');
@@ -1385,7 +1394,7 @@ window.addEventListener('message',e=>{const m=e.data||{};if(m.type==='GZ_PURCHAS
                 return;
             }
             const entries = Object.entries(user.savedProgress)
-                .map(([gameId, prog]) => ({ game: appState.games.find(g => g.id === gameId), prog }))
+                .map(([gameId, prog]) => ({ game: appState.games.find(g => String(g.id) === String(gameId)), prog }))
                 .filter(item => item.game);
 
             if (entries.length === 0) {
@@ -1396,11 +1405,11 @@ window.addEventListener('message',e=>{const m=e.data||{};if(m.type==='GZ_PURCHAS
             grid.innerHTML = entries.map(({ game, prog }) => `
                 <div class="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-indigo-500/30 flex items-center justify-between gap-3 shadow-sm">
                     <div class="min-w-0">
-                        <div class="text-[11px] font-bold text-indigo-500">Level ${prog.level || 1} • Skor ${prog.score || 0}</div>
-                        <h4 class="font-extrabold text-sm truncate">${game.title}</h4>
-                        <p class="text-[11px] text-slate-400">Terakhir dimainkan: ${prog.updatedAt || 'Baru saja'}</p>
+                        <div class="text-[11px] font-bold text-indigo-500">Level ${Number(prog.level || 1)} • Skor ${Number(prog.score || 0)}</div>
+                        <h4 class="font-extrabold text-sm truncate">${escapeHtml(game.title)}</h4>
+                        <p class="text-[11px] text-slate-400">Terakhir dimainkan: ${escapeHtml(prog.updatedAt || 'Baru saja')}</p>
                     </div>
-                    <button onclick="launchGame('${game.id}')" class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-extrabold shrink-0">
+                    <button onclick="launchGame('${escapeHtml(game.id)}')" class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-extrabold shrink-0">
                         <i class="fa-solid fa-play mr-1"></i>Lanjutkan
                     </button>
                 </div>
@@ -1410,7 +1419,7 @@ window.addEventListener('message',e=>{const m=e.data||{};if(m.type==='GZ_PURCHAS
         function renderGamesGrid() {
             const grid = document.getElementById('games-grid');
             const user = getActiveUser();
-            let list = [...appState.games];
+            let list = [...(appState.games || [])];
 
             if (activeCategory === 'popular') {
                 list = list.filter(g => (g.plays || 0) >= 500 || (g.likes || 0) >= 100).sort((a, b) => (b.plays || 0) - (a.plays || 0));
@@ -1421,7 +1430,7 @@ window.addEventListener('message',e=>{const m=e.data||{};if(m.type==='GZ_PURCHAS
             }
 
             if (searchQuery) {
-                list = list.filter(g => g.title.toLowerCase().includes(searchQuery) || g.category.toLowerCase().includes(searchQuery));
+                list = list.filter(g => (g.title || '').toLowerCase().includes(searchQuery) || (g.category || '').toLowerCase().includes(searchQuery));
             }
 
             const countLabel = document.getElementById('catalog-count-label');
@@ -1436,12 +1445,13 @@ window.addEventListener('message',e=>{const m=e.data||{};if(m.type==='GZ_PURCHAS
                 const isPopular = (g.plays || 0) >= 500;
                 const isMostLiked = (g.likes || 0) >= 150;
                 const likedByMe = user && Array.isArray(g.likedBy) && g.likedBy.includes(user.username);
-                const thumb = g.thumbnail || `https://placehold.co/600x360/1e293b/818cf8?text=${encodeURIComponent(g.title)}`;
+                const thumb = g.thumbnail || `https://placehold.co/600x360/1e293b/818cf8?text=${encodeURIComponent(g.title || 'Game')}`;
+                const safeId = escapeHtml(g.id);
                 return `
                 <div class="group bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/80 dark:border-slate-800 overflow-hidden flex flex-col justify-between shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
                     <div>
                         <div class="relative aspect-video bg-slate-800 overflow-hidden">
-                            <img src="${thumb}" onerror="this.src='https://placehold.co/600x360/1e293b/818cf8?text=GameZone'" alt="${g.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                            <img src="${escapeHtml(thumb)}" onerror="this.src='https://placehold.co/600x360/1e293b/818cf8?text=GameZone'" alt="${escapeHtml(g.title)}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
                             <div class="absolute top-2.5 left-2.5 flex flex-wrap gap-1.5">
                                 ${isPopular ? `<span class="px-2.5 py-1 rounded-full bg-orange-500/95 text-white text-[10px] font-extrabold shadow">🔥 Banyak Dimainkan</span>` : ''}
                                 ${isMostLiked ? `<span class="px-2.5 py-1 rounded-full bg-rose-500/95 text-white text-[10px] font-extrabold shadow">❤️ Banyak Suka</span>` : ''}
@@ -1450,17 +1460,17 @@ window.addEventListener('message',e=>{const m=e.data||{};if(m.type==='GZ_PURCHAS
                         </div>
                         <div class="p-4 space-y-2">
                             <div class="flex items-center justify-between text-[11px] font-bold text-indigo-500">
-                                <span>${g.category}</span>
+                                <span>${escapeHtml(g.category)}</span>
                                 <span class="text-slate-400"><i class="fa-solid fa-gamepad mr-1"></i>${(g.plays || 0).toLocaleString('id-ID')}x dimainkan</span>
                             </div>
-                            <h3 class="font-extrabold text-base leading-snug line-clamp-1">${g.title}</h3>
+                            <h3 class="font-extrabold text-base leading-snug line-clamp-1">${escapeHtml(g.title)}</h3>
                         </div>
                     </div>
                     <div class="px-4 pb-4 pt-1 flex items-center gap-2">
-                        <button onclick="launchGame('${g.id}')" class="flex-1 py-2.5 rounded-2xl bg-indigo-600 hover:bg-indigo-500 text-white font-extrabold text-xs shadow-md shadow-indigo-500/20 transition-all">
+                        <button type="button" onclick="launchGame('${safeId}')" class="flex-1 py-2.5 rounded-2xl bg-indigo-600 hover:bg-indigo-500 text-white font-extrabold text-xs shadow-md shadow-indigo-500/20 transition-all">
                             <i class="fa-solid fa-play mr-1.5"></i>Mainkan
                         </button>
-                        <button onclick="toggleLikeGame('${g.id}')" class="px-3.5 py-2.5 rounded-2xl border ${likedByMe ? 'bg-rose-500/15 border-rose-500/30 text-rose-500' : 'bg-slate-100 dark:bg-slate-800 border-transparent text-slate-500 dark:text-slate-300'} font-bold text-xs transition-all">
+                        <button type="button" onclick="toggleLikeGame('${safeId}')" class="px-3.5 py-2.5 rounded-2xl border ${likedByMe ? 'bg-rose-500/15 border-rose-500/30 text-rose-500' : 'bg-slate-100 dark:bg-slate-800 border-transparent text-slate-500 dark:text-slate-300'} font-bold text-xs transition-all">
                             <i class="fa-solid fa-heart mr-1"></i>${g.likes || 0}
                         </button>
                     </div>
@@ -1526,10 +1536,33 @@ window.addEventListener('message',e=>{const m=e.data||{};if(m.type==='GZ_PURCHAS
         }
 
         // ==================== LAUNCH GAME, TOKO & SDK LISTENER ====================
+        function normalizeGameUrl(rawInput) {
+            let val = (rawInput || '').trim();
+            if (!val) return '';
+            // Ekstrak otomatis jika admin menempelkan tag <iframe src="..."></iframe>
+            const iframeMatch = val.match(/<iframe[^>]+src=["']([^"']+)["']/i);
+            if (iframeMatch && iframeMatch[1]) {
+                val = iframeMatch[1].trim();
+            }
+            if (val.startsWith('//')) {
+                val = 'https:' + val;
+            } else if (!/^https?:\/\//i.test(val) && !val.startsWith('data:') && !val.startsWith('blob:')) {
+                val = 'https://' + val;
+            }
+            return val;
+        }
+
         function launchGame(gameId) {
-            const game = appState.games.find(g => g.id === gameId);
-            if (!game) return;
-            activeGameId = gameId;
+            if (!gameId) {
+                showToast('ID Game tidak valid.', 'error');
+                return;
+            }
+            const game = (appState.games || []).find(g => String(g.id) === String(gameId));
+            if (!game) {
+                showToast('Data game tidak ditemukan. Muat ulang katalog.', 'error');
+                return;
+            }
+            activeGameId = game.id;
             game.plays = (game.plays || 0) + 1;
 
             const user = getActiveUser();
@@ -1538,8 +1571,8 @@ window.addEventListener('message',e=>{const m=e.data||{};if(m.type==='GZ_PURCHAS
                 user.lastSeen = Date.now();
                 user.points = (user.points || 0) + 10;
                 user.savedProgress = user.savedProgress || {};
-                if (!user.savedProgress[gameId]) {
-                    user.savedProgress[gameId] = { level: 1, score: 0, updatedAt: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) };
+                if (!user.savedProgress[game.id]) {
+                    user.savedProgress[game.id] = { level: 1, score: 0, updatedAt: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) };
                 }
             }
             saveState();
@@ -1549,12 +1582,24 @@ window.addEventListener('message',e=>{const m=e.data||{};if(m.type==='GZ_PURCHAS
             updateHeaderUI();
 
             const iframe = document.getElementById('game-iframe');
-            if (game.sourceType === 'html') {
+            const isHtmlMode = game.sourceType === 'html' || (!game.sourceUrl && !!game.sourceCode);
+
+            if (isHtmlMode) {
+                const htmlContent = (game.sourceCode || '').trim();
+                if (!htmlContent) {
+                    showToast('Kode HTML game ini masih kosong!', 'error');
+                    return;
+                }
                 iframe.removeAttribute('src');
-                iframe.srcdoc = game.sourceCode || '';
+                iframe.srcdoc = htmlContent;
             } else {
+                const cleanUrl = normalizeGameUrl(game.sourceUrl);
+                if (!cleanUrl) {
+                    showToast('URL / Link game belum diisi atau tidak valid!', 'error');
+                    return;
+                }
                 iframe.removeAttribute('srcdoc');
-                iframe.src = game.sourceUrl || 'about:blank';
+                iframe.src = cleanUrl;
             }
 
             iframe.onload = () => {
@@ -1564,15 +1609,16 @@ window.addEventListener('message',e=>{const m=e.data||{};if(m.type==='GZ_PURCHAS
                         type: 'GZ_INIT_DATA',
                         user: u ? { username: u.username, name: u.name, balance: u.balance } : null,
                         shopItems: game.shopItems || [],
-                        savedProgress: u && u.savedProgress ? (u.savedProgress[gameId] || null) : null
+                        savedProgress: u && u.savedProgress ? (u.savedProgress[game.id] || null) : null
                     }, '*');
                 } catch (err) {}
             };
 
             renderPlayerShopDrawer();
             renderInGameChat();
-            document.getElementById('game-player-modal').classList.remove('hidden');
-            document.getElementById('game-player-modal').classList.add('flex');
+            const modal = document.getElementById('game-player-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
         }
 
         function closeGamePlayer() {
@@ -2226,10 +2272,10 @@ window.addEventListener('message',e=>{const m=e.data||{};if(m.type==='GZ_PURCHAS
             box.innerHTML = msgs.map(m => `
                 <div class="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/75 space-y-1">
                     <div class="flex items-center justify-between text-[11px]">
-                        <span class="font-extrabold ${m.role === 'admin' ? 'text-rose-500' : 'text-indigo-500'}">${m.user} ${m.role === 'admin' ? '🛡️' : ''}</span>
-                        <span class="text-slate-400">${m.time}</span>
+                        <span class="font-extrabold ${m.role === 'admin' ? 'text-rose-500' : 'text-indigo-500'}">${escapeHtml(m.user)} ${m.role === 'admin' ? '🛡️' : ''}</span>
+                        <span class="text-slate-400">${escapeHtml(m.time)}</span>
                     </div>
-                    <p class="text-xs text-slate-700 dark:text-slate-200">${m.text}</p>
+                    <p class="text-xs text-slate-700 dark:text-slate-200">${escapeHtml(m.text)}</p>
                 </div>
             `).join('');
             box.scrollTop = box.scrollHeight;
@@ -2266,8 +2312,8 @@ window.addEventListener('message',e=>{const m=e.data||{};if(m.type==='GZ_PURCHAS
             const msgs = (appState.chatMessages || []).slice(-20);
             box.innerHTML = msgs.map(m => `
                 <div class="p-2 rounded-xl bg-slate-800">
-                    <div class="text-[10px] font-bold text-indigo-400">${m.user} <span class="text-slate-500">${m.time}</span></div>
-                    <div class="text-slate-200 mt-0.5">${m.text}</div>
+                    <div class="text-[10px] font-bold text-indigo-400">${escapeHtml(m.user)} <span class="text-slate-500">${escapeHtml(m.time)}</span></div>
+                    <div class="text-slate-200 mt-0.5">${escapeHtml(m.text)}</div>
                 </div>
             `).join('');
             box.scrollTop = box.scrollHeight;
@@ -2416,33 +2462,49 @@ window.addEventListener('message',e=>{const m=e.data||{};if(m.type==='GZ_PURCHAS
             const category = document.getElementById('admin-game-category').value;
             const sourceType = document.getElementById('admin-game-type').value;
             const thumbnail = document.getElementById('admin-game-thumb').value.trim();
-            const sourceUrl = document.getElementById('admin-game-url').value.trim();
-            const sourceCode = document.getElementById('admin-game-html').value;
+            const rawUrl = document.getElementById('admin-game-url').value.trim();
+            const sourceCode = document.getElementById('admin-game-html').value.trim();
+
+            if (sourceType === 'url') {
+                const normalized = normalizeGameUrl(rawUrl);
+                if (!normalized) {
+                    showToast('Masukkan URL Game HTTPS atau kode <iframe> yang valid!', 'error');
+                    return;
+                }
+            } else if (sourceType === 'html' && !sourceCode) {
+                showToast('Tempel kode HTML lengkap game terlebih dahulu!', 'error');
+                return;
+            }
+
+            const sourceUrl = sourceType === 'url' ? normalizeGameUrl(rawUrl) : '';
 
             if (sourceType === 'html' && detectedItemsBuffer.length === 0) {
                 scanHtmlShopItems();
             }
 
-            appState.games.unshift({
+            const newGame = {
                 id: 'game_' + Date.now(),
                 title,
                 category,
                 sourceType,
                 sourceUrl,
-                sourceCode,
+                sourceCode: sourceType === 'html' ? sourceCode : '',
                 thumbnail,
                 plays: 1,
                 likes: 1,
                 likedBy: [],
                 isNew: true,
                 shopItems: [...detectedItemsBuffer]
-            });
+            };
+
+            appState.games.unshift(newGame);
             detectedItemsBuffer = [];
             e.target.reset();
             toggleAdminSourceField('url');
             document.getElementById('scanned-items-preview').classList.add('hidden');
             saveState();
             renderAdminPanel();
+            renderGamesGrid();
             showToast(`Game "${title}" berhasil dipublikasikan!`, 'success');
         }
 
@@ -2795,17 +2857,35 @@ function doPost(e) {
             try {
                 const res = await fetch(appState.appScriptUrl);
                 const data = await res.json();
-                if (data && data.users && data.games) {
+                if (data && typeof data === 'object' && (data.users || data.games)) {
                     const activeSession = appState.currentUser;
                     appState = {
+                        ...DEFAULT_STATE,
                         ...appState,
                         ...data,
+                        branding: { ...DEFAULT_STATE.branding, ...(appState.branding || {}), ...(data.branding || {}) },
+                        qris: {
+                            ...DEFAULT_STATE.qris,
+                            ...(appState.qris || {}),
+                            ...(data.qris || {}),
+                            fees: {
+                                ...DEFAULT_STATE.qris.fees,
+                                ...((appState.qris && appState.qris.fees) || {}),
+                                ...((data.qris && data.qris.fees) || {})
+                            }
+                        },
+                        paymentGateway: { ...DEFAULT_STATE.paymentGateway, ...(appState.paymentGateway || {}), ...(data.paymentGateway || {}) },
+                        users: (data.users && Object.keys(data.users).length) ? data.users : appState.users,
+                        games: (Array.isArray(data.games) && data.games.length) ? data.games : appState.games,
                         currentUser: activeSession
                     };
                     saveState(false);
+                    applyBranding();
                     updateHeaderUI();
                     renderContinuePlaying();
                     renderGamesGrid();
+                    if (currentView === 'wallet') renderWalletView();
+                    if (currentView === 'admin') renderAdminPanel();
                     if (notify) showToast('Data terbaru berhasil dimuat dari Cloud!', 'success');
                 }
             } catch (e) {
@@ -2888,6 +2968,16 @@ function doPost(e) {
                 if (appState.appScriptUrl) {
                     pullFromCloud(false);
                 }
+                setInterval(() => {
+                    const active = getActiveUser();
+                    if (active) {
+                        active.lastSeen = Date.now();
+                        saveState(false);
+                    }
+                    if (currentView === 'chat') {
+                        renderOnlinePlayers();
+                    }
+                }, 30000);
             } catch (err) {
                 console.error('Kesalahan inisialisasi portal:', err);
             }
