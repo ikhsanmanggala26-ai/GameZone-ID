@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GameZone ID - Portal Game, Dompet Digital & Komunitas</title>
+    <link id="dynamic-favicon" rel="icon" type="image/png" href="https://placehold.co/64x64/4f46e5/ffffff?text=GZ">
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -53,12 +54,12 @@
                 <!-- Logo & Pin -->
                 <div class="flex items-center justify-between px-1.5 pt-1">
                     <button onclick="navigateTo('catalog')" class="flex items-center gap-3 text-left focus:outline-none">
-                        <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-indigo-600 via-purple-600 to-pink-500 flex items-center justify-center text-white shadow-lg shadow-indigo-500/30 shrink-0">
+                        <div id="sidebar-brand-logo-box" class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-indigo-600 via-purple-600 to-pink-500 flex items-center justify-center text-white shadow-lg shadow-indigo-500/30 shrink-0 overflow-hidden">
                             <i class="fa-solid fa-gamepad text-lg"></i>
                         </div>
                         <div class="sidebar-label">
-                            <span class="font-black text-lg tracking-tight bg-gradient-to-r from-indigo-500 to-purple-500 bg-clip-text text-transparent">GameZone ID</span>
-                            <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Portal & Wallet</p>
+                            <span id="sidebar-brand-name" class="font-black text-lg tracking-tight bg-gradient-to-r from-indigo-500 to-purple-500 bg-clip-text text-transparent">GameZone ID</span>
+                            <p id="sidebar-brand-tagline" class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Portal & Wallet</p>
                         </div>
                     </button>
                     <button onclick="toggleSidebarPin()" title="Kunci / Buka Lebar Sidebar" class="sidebar-label hidden lg:flex w-8 h-8 rounded-xl items-center justify-center text-slate-400 hover:text-indigo-500 hover:bg-slate-100 dark:hover:bg-slate-800">
@@ -251,13 +252,19 @@
                         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                             <div class="lg:col-span-2 rounded-3xl bg-gradient-to-br from-slate-900 via-indigo-950 to-purple-950 text-white p-6 sm:p-8 border border-indigo-500/30 shadow-xl flex flex-col justify-between gap-6">
                                 <div class="flex items-start justify-between gap-4">
-                                    <div>
-                                        <span class="text-xs font-bold uppercase tracking-wider text-indigo-300">Saldo Dompet GameZone ID</span>
-                                        <div id="wallet-main-balance" class="text-3xl sm:text-4xl font-black mt-1">Rp 0</div>
-                                        <p id="wallet-user-info" class="text-xs text-slate-300 mt-2">Pemain: -</p>
+                                    <div class="flex items-center gap-4 min-w-0">
+                                        <div id="wallet-profile-avatar" class="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-indigo-600 border-2 border-white/20 flex items-center justify-center text-xl font-black uppercase overflow-hidden shrink-0 shadow-lg">
+                                            P
+                                        </div>
+                                        <div class="min-w-0">
+                                            <span class="text-xs font-bold uppercase tracking-wider text-indigo-300">Saldo Dompet GameZone ID</span>
+                                            <div id="wallet-main-balance" class="text-2xl sm:text-4xl font-black mt-0.5 truncate">Rp 0</div>
+                                            <p id="wallet-user-info" class="text-xs text-slate-300 mt-1 truncate">Pemain: -</p>
+                                            <div id="wallet-profile-badges" class="flex flex-wrap gap-1.5 mt-2"></div>
+                                        </div>
                                     </div>
-                                    <button onclick="openEditProfileModal()" class="px-4 py-2 rounded-2xl bg-white/10 hover:bg-white/20 text-xs font-bold border border-white/15 transition-all">
-                                        <i class="fa-solid fa-user-pen mr-1.5"></i>Edit Profil
+                                    <button onclick="openEditProfileModal()" class="px-4 py-2 rounded-2xl bg-white/10 hover:bg-white/20 text-xs font-bold border border-white/15 transition-all shrink-0">
+                                        <i class="fa-solid fa-user-pen mr-1.5"></i>Edit Profil & Foto
                                     </button>
                                 </div>
 
@@ -305,11 +312,16 @@
                         <!-- Baris Tengah: Catatan Prestasi Bermain & Inventori Item Permanen -->
                         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                             <div class="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/80 dark:border-slate-800 p-6 space-y-4 shadow-sm">
-                                <div class="flex items-center justify-between">
+                                <div class="flex flex-wrap items-center justify-between gap-2">
                                     <h3 class="font-extrabold text-base flex items-center gap-2">
                                         <i class="fa-solid fa-medal text-amber-500"></i> Catatan Prestasi Bermain
                                     </h3>
-                                    <span id="wallet-achievements-count" class="text-[11px] font-extrabold px-2.5 py-1 rounded-full bg-amber-500/15 text-amber-600 dark:text-amber-400">0 Prestasi</span>
+                                    <div class="flex items-center gap-2">
+                                        <button onclick="syncAchievementsToProfile(true)" class="px-2.5 py-1 rounded-xl bg-indigo-500/15 hover:bg-indigo-500/25 text-indigo-600 dark:text-indigo-400 text-[11px] font-bold transition-all" title="Sinkronkan Prestasi ke Profil Akun">
+                                            <i class="fa-solid fa-rotate mr-1"></i>Sinkron ke Profil
+                                        </button>
+                                        <span id="wallet-achievements-count" class="text-[11px] font-extrabold px-2.5 py-1 rounded-full bg-amber-500/15 text-amber-600 dark:text-amber-400">0 Prestasi</span>
+                                    </div>
                                 </div>
                                 <div id="wallet-achievements-list" class="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-72 overflow-y-auto pr-1"></div>
                             </div>
@@ -407,6 +419,7 @@
                             <button onclick="switchAdminTab('topup')" id="admin-tab-btn-topup" class="admin-tab-btn px-4 py-2 rounded-2xl text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">💳 Top Up & QRIS</button>
                             <button onclick="switchAdminTab('gateway')" id="admin-tab-btn-gateway" class="admin-tab-btn px-4 py-2 rounded-2xl text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">🏦 Payment Gateway</button>
                             <button onclick="switchAdminTab('sdk')" id="admin-tab-btn-sdk" class="admin-tab-btn px-4 py-2 rounded-2xl text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">🔌 SDK & Deteksi Item</button>
+                            <button onclick="switchAdminTab('branding')" id="admin-tab-btn-branding" class="admin-tab-btn px-4 py-2 rounded-2xl text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">🎨 Logo & Favicon</button>
                             <button onclick="switchAdminTab('cloud')" id="admin-tab-btn-cloud" class="admin-tab-btn px-4 py-2 rounded-2xl text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">☁️ Apps Script & Cloud</button>
                         </div>
                     </div>
@@ -600,6 +613,68 @@
                         <pre id="sdk-code-snippet" class="p-4 rounded-2xl bg-slate-950 text-emerald-400 text-xs overflow-x-auto font-mono leading-relaxed"></pre>
                     </div>
 
+                    <!-- TAB ADMIN: EDIT LOGO & FAVICON PORTAL -->
+                    <div id="admin-panel-branding" class="hidden bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/80 dark:border-slate-800 p-6 space-y-5">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h3 class="font-extrabold text-base flex items-center gap-2">
+                                    <i class="fa-solid fa-paintbrush text-indigo-500"></i> Identitas Portal: Logo & Favicon Browser
+                                </h3>
+                                <p class="text-xs text-slate-400 mt-0.5">Ubah logo utama sidebar, nama portal, serta ikon tab browser (Favicon) untuk semua perangkat.</p>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                            <!-- Pengaturan Logo Portal -->
+                            <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/70 space-y-3">
+                                <label class="text-xs font-extrabold text-indigo-500 flex items-center gap-1.5">
+                                    <i class="fa-solid fa-image"></i> Logo Utama Portal
+                                </label>
+                                <div class="flex items-center gap-3">
+                                    <img id="preview-brand-logo" src="https://placehold.co/120x120/4f46e5/ffffff?text=GZ" alt="Preview Logo" class="w-16 h-16 rounded-2xl object-cover bg-slate-900 border border-slate-300 dark:border-slate-700 shrink-0">
+                                    <div class="flex-1 space-y-2 min-w-0">
+                                        <label class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold cursor-pointer">
+                                            <i class="fa-solid fa-upload"></i> Upload Logo
+                                            <input type="file" accept="image/*" onchange="handleBrandingFileUpload(event, 'logoUrl', 'admin-brand-logo-url', 'preview-brand-logo', 240)" class="hidden">
+                                        </label>
+                                        <input id="admin-brand-logo-url" type="text" oninput="updateQrisPreview('preview-brand-logo', this.value)" placeholder="Atau tempel URL Gambar Logo (kosongkan untuk ikon default)" class="w-full px-3 py-1.5 rounded-xl bg-white dark:bg-slate-900 text-xs outline-none">
+                                    </div>
+                                </div>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
+                                    <input id="admin-brand-name" type="text" placeholder="Nama Portal (misal: GameZone ID)" class="px-3 py-2 rounded-xl bg-white dark:bg-slate-900 text-xs font-bold outline-none">
+                                    <input id="admin-brand-tagline" type="text" placeholder="Tagline (misal: Portal & Wallet)" class="px-3 py-2 rounded-xl bg-white dark:bg-slate-900 text-xs outline-none">
+                                </div>
+                            </div>
+
+                            <!-- Pengaturan Favicon Tab Browser -->
+                            <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/70 space-y-3">
+                                <label class="text-xs font-extrabold text-emerald-500 flex items-center gap-1.5">
+                                    <i class="fa-solid fa-star"></i> Favicon Tab Browser (Ikon Tab Website)
+                                </label>
+                                <div class="flex items-center gap-3">
+                                    <img id="preview-brand-favicon" src="https://placehold.co/64x64/4f46e5/ffffff?text=GZ" alt="Preview Favicon" class="w-16 h-16 rounded-2xl object-contain bg-white border border-slate-300 dark:border-slate-700 p-2 shrink-0">
+                                    <div class="flex-1 space-y-2 min-w-0">
+                                        <label class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold cursor-pointer">
+                                            <i class="fa-solid fa-upload"></i> Upload Favicon
+                                            <input type="file" accept="image/*" onchange="handleBrandingFileUpload(event, 'faviconUrl', 'admin-brand-favicon-url', 'preview-brand-favicon', 96)" class="hidden">
+                                        </label>
+                                        <input id="admin-brand-favicon-url" type="text" oninput="updateQrisPreview('preview-brand-favicon', this.value)" placeholder="Atau tempel URL Favicon (.png / .ico)" class="w-full px-3 py-1.5 rounded-xl bg-white dark:bg-slate-900 text-xs outline-none">
+                                    </div>
+                                </div>
+                                <p class="text-[11px] text-slate-400">Disarankan gambar persegi (1:1) agar tampil tajam di tab browser HP maupun desktop.</p>
+                            </div>
+                        </div>
+
+                        <div class="flex flex-wrap gap-2.5">
+                            <button onclick="saveBrandingConfig()" class="px-6 py-2.5 rounded-2xl bg-indigo-600 hover:bg-indigo-500 text-white font-extrabold text-sm">
+                                <i class="fa-solid fa-check mr-1.5"></i>Simpan & Terapkan Logo + Favicon
+                            </button>
+                            <button onclick="resetBrandingDefault()" class="px-4 py-2.5 rounded-2xl bg-slate-200 dark:bg-slate-800 text-xs font-bold">
+                                Reset ke Bawaan
+                            </button>
+                        </div>
+                    </div>
+
                     <!-- TAB ADMIN 5: GOOGLE APPS SCRIPT & AUTO-SYNC -->
                     <div id="admin-panel-cloud" class="hidden bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/80 dark:border-slate-800 p-6 space-y-4">
                         <h3 class="font-extrabold text-base flex items-center gap-2">
@@ -715,17 +790,42 @@
     </div>
 
     <!-- ==================== MODAL EDIT PROFIL AKUN ==================== -->
-    <div id="edit-profile-modal" class="fixed inset-0 z-[100] bg-slate-950/75 backdrop-blur-sm hidden items-center justify-center p-4">
-        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl max-w-md w-full p-6 space-y-4 shadow-2xl">
+    <div id="edit-profile-modal" class="fixed inset-0 z-[100] bg-slate-950/75 backdrop-blur-sm hidden items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl max-w-md w-full p-6 space-y-4 shadow-2xl my-auto">
             <div class="flex items-center justify-between">
-                <h3 class="text-lg font-black">Edit Profil & Keamanan Akun</h3>
+                <h3 class="text-lg font-black">Edit Foto, Profil & Prestasi Akun</h3>
                 <button onclick="closeEditProfileModal()" class="w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-400"><i class="fa-solid fa-xmark"></i></button>
             </div>
-            <form onsubmit="saveProfileEdit(event)" class="space-y-3">
+            <form onsubmit="saveProfileEdit(event)" class="space-y-3.5">
+                <!-- Edit Foto Profil -->
+                <div class="p-3.5 rounded-2xl bg-slate-100 dark:bg-slate-800/80 flex items-center gap-3.5">
+                    <img id="edit-profile-avatar-preview" src="https://placehold.co/120x120/4f46e5/ffffff?text=P" alt="Foto Profil" class="w-16 h-16 rounded-2xl object-cover bg-indigo-600 border-2 border-indigo-500/40 shrink-0">
+                    <div class="flex-1 space-y-1.5 min-w-0">
+                        <div class="flex flex-wrap gap-1.5">
+                            <label class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold cursor-pointer">
+                                <i class="fa-solid fa-camera"></i> Upload Foto
+                                <input type="file" accept="image/*" onchange="handleAvatarFileUpload(event)" class="hidden">
+                            </label>
+                            <button type="button" onclick="clearProfileAvatar()" class="px-2.5 py-1.5 rounded-xl bg-slate-200 dark:bg-slate-700 text-[11px] font-bold">Hapus Foto</button>
+                        </div>
+                        <input id="edit-profile-avatar-url" type="text" oninput="updateAvatarModalPreview(this.value)" placeholder="Atau tempel URL Foto Profil..." class="w-full px-3 py-1.5 rounded-xl bg-white dark:bg-slate-900 text-xs outline-none">
+                    </div>
+                </div>
+
                 <input id="edit-profile-name" type="text" required placeholder="Nama Tampilan" class="w-full px-4 py-2.5 rounded-2xl bg-slate-100 dark:bg-slate-800 text-sm outline-none">
                 <input id="edit-profile-email" type="email" required placeholder="Email Pemulihan OTP" class="w-full px-4 py-2.5 rounded-2xl bg-slate-100 dark:bg-slate-800 text-sm outline-none">
                 <input id="edit-profile-password" type="password" placeholder="Password Baru (kosongkan jika tidak diubah)" class="w-full px-4 py-2.5 rounded-2xl bg-slate-100 dark:bg-slate-800 text-sm outline-none">
-                <button type="submit" class="w-full py-3 rounded-2xl bg-indigo-600 text-white font-extrabold text-sm">Simpan Perubahan</button>
+
+                <!-- Ringkasan Prestasi Tersinkronisasi di Profil -->
+                <div class="p-3 rounded-2xl bg-amber-500/10 border border-amber-500/20 space-y-2">
+                    <div class="flex items-center justify-between text-xs">
+                        <span class="font-extrabold text-amber-600 dark:text-amber-400"><i class="fa-solid fa-medal mr-1"></i>Prestasi Tersinkronisasi di Profil</span>
+                        <button type="button" onclick="syncAchievementsToProfile(true)" class="text-[11px] font-bold text-indigo-500 hover:underline">Sinkronkan Sekarang</button>
+                    </div>
+                    <div id="edit-profile-achievements-preview" class="flex flex-wrap gap-1.5 max-h-24 overflow-y-auto"></div>
+                </div>
+
+                <button type="submit" class="w-full py-3 rounded-2xl bg-indigo-600 hover:bg-indigo-500 text-white font-extrabold text-sm">Simpan Perubahan Profil</button>
             </form>
         </div>
     </div>
@@ -869,6 +969,12 @@ window.addEventListener('message',e=>{const m=e.data||{};if(m.type==='GZ_PURCHAS
             currentUser: null,
             theme: 'dark',
             appScriptUrl: DEFAULT_APPSCRIPT_URL,
+            branding: {
+                siteName: 'GameZone ID',
+                tagline: 'Portal & Wallet',
+                logoUrl: '',
+                faviconUrl: ''
+            },
             qris: {
                 merchant: 'GameZone ID Official QRIS',
                 imageUrl: 'https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=GameZoneID-Merchant-QRIS',
@@ -996,6 +1102,7 @@ window.addEventListener('message',e=>{const m=e.data||{};if(m.type==='GZ_PURCHAS
                     appState = {
                         ...DEFAULT_STATE,
                         ...parsed,
+                        branding: { ...DEFAULT_STATE.branding, ...(parsed.branding || {}) },
                         qris: {
                             ...DEFAULT_STATE.qris,
                             ...(parsed.qris || {}),
@@ -1061,6 +1168,98 @@ window.addEventListener('message',e=>{const m=e.data||{};if(m.type==='GZ_PURCHAS
         function getActiveUser() {
             if (!appState.currentUser || !appState.users) return null;
             return appState.users[appState.currentUser] || null;
+        }
+
+        function renderUserAvatarHtml(user, sizeClass = 'w-6 h-6 text-xs rounded-xl') {
+            const initial = (user && user.name ? user.name.charAt(0) : 'P').toUpperCase();
+            if (user && user.avatarUrl) {
+                return `<img src="${user.avatarUrl}" onerror="this.style.display='none'" alt="${user.name}" class="${sizeClass} object-cover shrink-0">`;
+            }
+            return `<span class="${sizeClass} bg-indigo-600 text-white flex items-center justify-center font-black uppercase shrink-0">${initial}</span>`;
+        }
+
+        function applyBranding() {
+            const b = (appState && appState.branding) || DEFAULT_STATE.branding;
+            const siteName = b.siteName || 'GameZone ID';
+            const tagline = b.tagline || 'Portal & Wallet';
+
+            document.title = `${siteName} - ${tagline}`;
+
+            const nameEl = document.getElementById('sidebar-brand-name');
+            const tagEl = document.getElementById('sidebar-brand-tagline');
+            const logoBox = document.getElementById('sidebar-brand-logo-box');
+            if (nameEl) nameEl.textContent = siteName;
+            if (tagEl) tagEl.textContent = tagline;
+
+            if (logoBox) {
+                if (b.logoUrl) {
+                    logoBox.innerHTML = `<img src="${b.logoUrl}" alt="${siteName}" class="w-full h-full object-cover">`;
+                } else {
+                    logoBox.innerHTML = `<i class="fa-solid fa-gamepad text-lg"></i>`;
+                }
+            }
+
+            const faviconEl = document.getElementById('dynamic-favicon');
+            if (faviconEl) {
+                faviconEl.href = b.faviconUrl || b.logoUrl || 'https://placehold.co/64x64/4f46e5/ffffff?text=GZ';
+            }
+        }
+
+        function syncAchievementsToProfile(notify = false) {
+            const user = getActiveUser();
+            if (!user) return;
+            user.achievements = Array.isArray(user.achievements) ? user.achievements : [];
+
+            // Pastikan prestasi otomatis berdasarkan progres game, transaksi & item ikut tersinkronisasi
+            const existingIds = new Set(user.achievements.map(a => a.id));
+            const today = new Date().toLocaleDateString('id-ID');
+
+            if (!existingIds.has('ach_registered')) {
+                user.achievements.push({
+                    id: 'ach_registered',
+                    title: 'Anggota Resmi Portal',
+                    desc: 'Terdaftar dan terverifikasi di portal.',
+                    gameId: 'portal',
+                    gameTitle: (appState.branding && appState.branding.siteName) || 'GameZone ID',
+                    date: today
+                });
+            }
+            if ((user.inventory || []).length >= 1 && !existingIds.has('ach_first_item')) {
+                user.achievements.unshift({
+                    id: 'ach_first_item',
+                    title: 'Kolektor Item Pertama',
+                    desc: 'Membeli item game menggunakan saldo dompet.',
+                    gameId: 'portal',
+                    gameTitle: 'Toko GameZone ID',
+                    date: today
+                });
+            }
+            if (Object.keys(user.savedProgress || {}).length >= 1 && !existingIds.has('ach_cloud_player')) {
+                user.achievements.unshift({
+                    id: 'ach_cloud_player',
+                    title: 'Penjelajah Cloud Save',
+                    desc: 'Menyimpan progres permainan ke akun.',
+                    gameId: 'portal',
+                    gameTitle: 'Cloud Save System',
+                    date: today
+                });
+            }
+
+            // Sinkronkan ringkasan prestasi ke profil akun
+            user.profileAchievements = user.achievements.map(a => ({
+                id: a.id,
+                title: a.title,
+                desc: a.desc,
+                gameTitle: a.gameTitle || 'GameZone ID',
+                date: a.date || today
+            }));
+
+            saveState(notify);
+            if (currentView === 'wallet') renderWalletView();
+            renderEditProfileAchievementsPreview();
+            if (notify) {
+                showToast(`✅ ${user.profileAchievements.length} catatan prestasi berhasil disinkronkan ke profil akun!`, 'success');
+            }
         }
 
         function isAdminUser(user = getActiveUser()) {
@@ -1299,14 +1498,15 @@ window.addEventListener('message',e=>{const m=e.data||{};if(m.type==='GZ_PURCHAS
             const sortedUsers = Object.values(appState.users || {}).sort((a, b) => (b.points || 0) - (a.points || 0));
             playersEl.innerHTML = sortedUsers.map((u, idx) => `
                 <div class="flex items-center justify-between p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/70">
-                    <div class="flex items-center gap-3">
-                        <span class="w-7 h-7 rounded-xl ${idx === 0 ? 'bg-amber-500 text-white' : idx === 1 ? 'bg-slate-400 text-white' : idx === 2 ? 'bg-orange-600 text-white' : 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300'} flex items-center justify-center font-black text-xs">${idx + 1}</span>
-                        <div>
-                            <div class="font-extrabold text-sm">${u.name}</div>
-                            <div class="text-[11px] text-slate-400">${(u.achievements || []).length} Prestasi • ${(u.inventory || []).length} Item</div>
+                    <div class="flex items-center gap-3 min-w-0">
+                        <span class="w-7 h-7 rounded-xl ${idx === 0 ? 'bg-amber-500 text-white' : idx === 1 ? 'bg-slate-400 text-white' : idx === 2 ? 'bg-orange-600 text-white' : 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300'} flex items-center justify-center font-black text-xs shrink-0">${idx + 1}</span>
+                        ${renderUserAvatarHtml(u, 'w-9 h-9 rounded-xl text-xs')}
+                        <div class="min-w-0">
+                            <div class="font-extrabold text-sm truncate">${u.name}</div>
+                            <div class="text-[11px] text-slate-400">${(u.profileAchievements || u.achievements || []).length} Prestasi • ${(u.inventory || []).length} Item</div>
                         </div>
                     </div>
-                    <span class="font-black text-xs text-indigo-500">${(u.points || 0).toLocaleString('id-ID')} Poin</span>
+                    <span class="font-black text-xs text-indigo-500 shrink-0">${(u.points || 0).toLocaleString('id-ID')} Poin</span>
                 </div>
             `).join('');
 
@@ -1507,6 +1707,7 @@ window.addEventListener('message',e=>{const m=e.data||{};if(m.type==='GZ_PURCHAS
                 date: new Date().toLocaleDateString('id-ID')
             });
             user.points = (user.points || 0) + 50;
+            syncAchievementsToProfile(false);
             saveState();
             showToast(`🏆 Prestasi Terbuka: ${ach.title} (+50 Poin)!`, 'success');
         }
@@ -1553,15 +1754,36 @@ window.addEventListener('message',e=>{const m=e.data||{};if(m.type==='GZ_PURCHAS
             guestBanner.classList.add('hidden');
             userContent.classList.remove('hidden');
 
+            syncAchievementsToProfile(false);
+
+            const avatarBox = document.getElementById('wallet-profile-avatar');
+            if (avatarBox) {
+                if (user.avatarUrl) {
+                    avatarBox.innerHTML = `<img src="${user.avatarUrl}" alt="${user.name}" class="w-full h-full object-cover">`;
+                } else {
+                    avatarBox.textContent = (user.name || 'P').charAt(0).toUpperCase();
+                }
+            }
+
             document.getElementById('wallet-main-balance').textContent = formatRupiah(user.balance || 0);
             document.getElementById('wallet-user-info').textContent = `${user.name} (@${user.username}) • ${user.email || 'Belum ada email'}`;
+
+            const achs = user.profileAchievements || user.achievements || [];
+            const badgesBox = document.getElementById('wallet-profile-badges');
+            if (badgesBox) {
+                badgesBox.innerHTML = achs.slice(0, 3).map(a => `
+                    <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-amber-400/20 border border-amber-300/30 text-amber-200 text-[10px] font-bold">
+                        🏆 ${a.title}
+                    </span>
+                `).join('');
+            }
+
             document.getElementById('wallet-stat-points').textContent = (user.points || 0).toLocaleString('id-ID');
             document.getElementById('wallet-stat-items').textContent = (user.inventory || []).length;
-            document.getElementById('wallet-stat-achievements').textContent = (user.achievements || []).length;
+            document.getElementById('wallet-stat-achievements').textContent = achs.length;
             document.getElementById('wallet-stat-saves').textContent = Object.keys(user.savedProgress || {}).length;
 
             // Prestasi
-            const achs = user.achievements || [];
             document.getElementById('wallet-achievements-count').textContent = `${achs.length} Prestasi`;
             document.getElementById('wallet-achievements-list').innerHTML = achs.length ? achs.map(a => `
                 <div class="p-3.5 rounded-2xl bg-amber-500/10 border border-amber-500/20 space-y-1">
@@ -1570,7 +1792,10 @@ window.addEventListener('message',e=>{const m=e.data||{};if(m.type==='GZ_PURCHAS
                         <span class="text-[10px] text-slate-400">${a.date || ''}</span>
                     </div>
                     <p class="text-[11px] text-slate-600 dark:text-slate-300">${a.desc}</p>
-                    <span class="inline-block text-[10px] font-bold px-2 py-0.5 rounded-md bg-slate-200/70 dark:bg-slate-800 text-slate-500">${a.gameTitle || 'GameZone ID'}</span>
+                    <div class="flex items-center justify-between pt-0.5">
+                        <span class="inline-block text-[10px] font-bold px-2 py-0.5 rounded-md bg-slate-200/70 dark:bg-slate-800 text-slate-500">${a.gameTitle || 'GameZone ID'}</span>
+                        <span class="text-[10px] font-bold text-emerald-500"><i class="fa-solid fa-circle-check mr-0.5"></i>Profil</span>
+                    </div>
                 </div>
             `).join('') : `<div class="col-span-full text-xs text-slate-400 py-4">Belum ada prestasi. Mainkan game untuk membuka prestasi!</div>`;
 
@@ -1902,11 +2127,67 @@ window.addEventListener('message',e=>{const m=e.data||{};if(m.type==='GZ_PURCHAS
         function openEditProfileModal() {
             const user = getActiveUser();
             if (!user) return;
+            syncAchievementsToProfile(false);
             document.getElementById('edit-profile-name').value = user.name || '';
             document.getElementById('edit-profile-email').value = user.email || '';
             document.getElementById('edit-profile-password').value = '';
+            document.getElementById('edit-profile-avatar-url').value = user.avatarUrl || '';
+            updateAvatarModalPreview(user.avatarUrl || '');
+            renderEditProfileAchievementsPreview();
             document.getElementById('edit-profile-modal').classList.remove('hidden');
             document.getElementById('edit-profile-modal').classList.add('flex');
+        }
+
+        function updateAvatarModalPreview(url) {
+            const user = getActiveUser();
+            const img = document.getElementById('edit-profile-avatar-preview');
+            if (!img) return;
+            const initial = (user && user.name ? user.name.charAt(0) : 'P').toUpperCase();
+            img.src = url || `https://placehold.co/120x120/4f46e5/ffffff?text=${encodeURIComponent(initial)}`;
+        }
+
+        function clearProfileAvatar() {
+            document.getElementById('edit-profile-avatar-url').value = '';
+            updateAvatarModalPreview('');
+        }
+
+        function handleAvatarFileUpload(event) {
+            const file = event.target.files && event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                const img = new Image();
+                img.onload = function () {
+                    const maxDim = 220;
+                    let w = img.width;
+                    let h = img.height;
+                    if (w > maxDim || h > maxDim) {
+                        if (w > h) { h = Math.round((h * maxDim) / w); w = maxDim; }
+                        else { w = Math.round((w * maxDim) / h); h = maxDim; }
+                    }
+                    const canvas = document.createElement('canvas');
+                    canvas.width = w;
+                    canvas.height = h;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, w, h);
+                    const compressed = canvas.toDataURL('image/jpeg', 0.85);
+                    document.getElementById('edit-profile-avatar-url').value = compressed;
+                    updateAvatarModalPreview(compressed);
+                    showToast('Foto profil siap disimpan!', 'info');
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function renderEditProfileAchievementsPreview() {
+            const user = getActiveUser();
+            const box = document.getElementById('edit-profile-achievements-preview');
+            if (!box || !user) return;
+            const list = user.profileAchievements || user.achievements || [];
+            box.innerHTML = list.length ? list.map(a => `
+                <span class="px-2 py-0.5 rounded-lg bg-amber-500/20 text-amber-600 dark:text-amber-300 text-[10px] font-bold">🏆 ${a.title}</span>
+            `).join('') : `<span class="text-[11px] text-slate-400">Belum ada prestasi tercatat.</span>`;
         }
 
         function closeEditProfileModal() {
@@ -1920,13 +2201,15 @@ window.addEventListener('message',e=>{const m=e.data||{};if(m.type==='GZ_PURCHAS
             if (!user) return;
             user.name = document.getElementById('edit-profile-name').value.trim();
             user.email = document.getElementById('edit-profile-email').value.trim().toLowerCase();
+            user.avatarUrl = document.getElementById('edit-profile-avatar-url').value.trim();
             const newPass = document.getElementById('edit-profile-password').value;
             if (newPass) user.password = newPass;
+            syncAchievementsToProfile(false);
             saveState();
             closeEditProfileModal();
             updateHeaderUI();
             renderWalletView();
-            showToast('Profil akun berhasil diperbarui!', 'success');
+            showToast('Foto, profil & catatan prestasi akun berhasil diperbarui!', 'success');
         }
 
         // ==================== LIVE CHAT & STATUS ONLINE REAL-TIME ====================
@@ -2042,7 +2325,7 @@ window.addEventListener('message',e=>{const m=e.data||{};if(m.type==='GZ_PURCHAS
         let detectedItemsBuffer = [];
 
         function switchAdminTab(tab) {
-            ['games', 'topup', 'gateway', 'sdk', 'cloud'].forEach(t => {
+            ['games', 'topup', 'gateway', 'sdk', 'branding', 'cloud'].forEach(t => {
                 document.getElementById('admin-panel-' + t).classList.toggle('hidden', t !== tab);
                 const btn = document.getElementById('admin-tab-btn-' + t);
                 btn.className = t === tab
@@ -2050,6 +2333,57 @@ window.addEventListener('message',e=>{const m=e.data||{};if(m.type==='GZ_PURCHAS
                     : 'admin-tab-btn px-4 py-2 rounded-2xl text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300';
             });
             renderAdminPanel();
+        }
+
+        function handleBrandingFileUpload(event, stateKey, inputId, previewId, maxDim = 240) {
+            const file = event.target.files && event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                const img = new Image();
+                img.onload = function () {
+                    let w = img.width;
+                    let h = img.height;
+                    if (w > maxDim || h > maxDim) {
+                        if (w > h) { h = Math.round((h * maxDim) / w); w = maxDim; }
+                        else { w = Math.round((w * maxDim) / h); h = maxDim; }
+                    }
+                    const canvas = document.createElement('canvas');
+                    canvas.width = w;
+                    canvas.height = h;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, w, h);
+                    const dataUrl = canvas.toDataURL('image/png');
+                    const inputEl = document.getElementById(inputId);
+                    if (inputEl) inputEl.value = dataUrl;
+                    updateQrisPreview(previewId, dataUrl);
+                    showToast('Gambar berhasil dimuat! Klik Simpan untuk menerapkan.', 'info');
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function saveBrandingConfig() {
+            if (!isAdminUser()) return;
+            appState.branding = {
+                siteName: document.getElementById('admin-brand-name').value.trim() || 'GameZone ID',
+                tagline: document.getElementById('admin-brand-tagline').value.trim() || 'Portal & Wallet',
+                logoUrl: document.getElementById('admin-brand-logo-url').value.trim(),
+                faviconUrl: document.getElementById('admin-brand-favicon-url').value.trim()
+            };
+            applyBranding();
+            saveState();
+            showToast('Logo, nama portal & favicon berhasil disimpan dan diterapkan!', 'success');
+        }
+
+        function resetBrandingDefault() {
+            if (!isAdminUser()) return;
+            appState.branding = { ...DEFAULT_STATE.branding };
+            applyBranding();
+            saveState();
+            renderAdminPanel();
+            showToast('Logo & favicon dikembalikan ke bawaan.', 'info');
         }
 
         function toggleAdminSourceField(type) {
@@ -2350,6 +2684,15 @@ window.addEventListener('message',e=>{const m=e.data||{};if(m.type==='GZ_PURCHAS
             document.getElementById('pg-server-key').value = pg.serverKey || '';
             document.getElementById('pg-enabled').checked = !!pg.enabled;
 
+            // Branding (Logo & Favicon)
+            const br = appState.branding || DEFAULT_STATE.branding;
+            document.getElementById('admin-brand-name').value = br.siteName || 'GameZone ID';
+            document.getElementById('admin-brand-tagline').value = br.tagline || 'Portal & Wallet';
+            document.getElementById('admin-brand-logo-url').value = br.logoUrl || '';
+            document.getElementById('admin-brand-favicon-url').value = br.faviconUrl || '';
+            updateQrisPreview('preview-brand-logo', br.logoUrl || 'https://placehold.co/120x120/4f46e5/ffffff?text=GZ');
+            updateQrisPreview('preview-brand-favicon', br.faviconUrl || br.logoUrl || 'https://placehold.co/64x64/4f46e5/ffffff?text=GZ');
+
             // SDK & GAS Snippets
             document.getElementById('sdk-code-snippet').textContent = `// 1. Daftarkan Item Toko Game ke Portal
 const SHOP_ITEMS = [{ id: 'pedang_naga', name: 'Pedang Naga', price: 15000 }];
@@ -2496,7 +2839,7 @@ function doPost(e) {
                 authArea.innerHTML = `
                     <div class="flex items-center gap-2">
                         <button onclick="openEditProfileModal()" class="flex items-center gap-2 px-3 py-1.5 rounded-2xl bg-slate-100 dark:bg-slate-900 hover:bg-slate-200 dark:hover:bg-slate-800 border border-slate-200/80 dark:border-slate-800 text-xs font-extrabold transition-all">
-                            <span class="w-6 h-6 rounded-xl bg-indigo-600 text-white flex items-center justify-center uppercase">${user.name.charAt(0)}</span>
+                            ${renderUserAvatarHtml(user, 'w-6 h-6 rounded-xl text-xs')}
                             <span class="hidden md:inline max-w-[110px] truncate">${user.name}</span>
                         </button>
                         <button onclick="logoutUser()" title="Keluar Akun" class="p-2 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-500 text-xs">
@@ -2517,21 +2860,26 @@ function doPost(e) {
             processPaymentGatewayInstant, openAuthModal, closeAuthModal, switchAuthMode,
             handleLoginSubmit, handleRegisterSubmit, logoutUser, sendPasswordOtp,
             verifyOtpAndResetPassword, openEditProfileModal, closeEditProfileModal,
-            saveProfileEdit, switchChatTab, sendChatMessage, sendInGameChat,
-            switchAdminTab, toggleAdminSourceField, scanHtmlShopItems, adminAddGame,
-            adminDeleteGame, openEditShopModal, closeEditShopModal, addShopItemRow,
-            saveEditedShopItems, updateQrisPreview, handleQrisFileUpload, saveAdminQris,
-            approveTopupRequest, savePaymentGatewayConfig, copySdkSnippet, copyGasTemplate,
-            saveAppScriptUrl, syncWithCloud, pullFromCloud
+            saveProfileEdit, handleAvatarFileUpload, updateAvatarModalPreview,
+            clearProfileAvatar, syncAchievementsToProfile, switchChatTab,
+            sendChatMessage, sendInGameChat, switchAdminTab, toggleAdminSourceField,
+            scanHtmlShopItems, adminAddGame, adminDeleteGame, openEditShopModal,
+            closeEditShopModal, addShopItemRow, saveEditedShopItems, updateQrisPreview,
+            handleQrisFileUpload, saveAdminQris, approveTopupRequest,
+            savePaymentGatewayConfig, handleBrandingFileUpload, saveBrandingConfig,
+            resetBrandingDefault, copySdkSnippet, copyGasTemplate, saveAppScriptUrl,
+            syncWithCloud, pullFromCloud
         });
 
         window.addEventListener('DOMContentLoaded', () => {
             try {
                 loadState();
                 applyTheme();
+                applyBranding();
                 const user = getActiveUser();
                 if (user) {
                     user.lastSeen = Date.now();
+                    syncAchievementsToProfile(false);
                     saveState(false);
                 }
                 updateHeaderUI();
