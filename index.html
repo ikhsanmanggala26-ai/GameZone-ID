@@ -115,12 +115,16 @@
                 </nav>
             </div>
 
-            <!-- Footer Sidebar: Mode Tema -->
+            <!-- Footer Sidebar: Mode Tema & Versi Portal -->
             <div class="p-3.5 border-t border-slate-200/80 dark:border-slate-800 space-y-2">
                 <button onclick="toggleThemeMode()" class="w-full flex items-center gap-3.5 px-3 py-2.5 rounded-2xl text-sm font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all">
                     <i id="theme-toggle-icon" class="fa-solid fa-sun w-5 text-center text-amber-400 shrink-0"></i>
                     <span id="theme-toggle-label" class="sidebar-label">Mode Terang</span>
                 </button>
+                <div class="px-3 py-2 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-between gap-2 text-[11px] font-extrabold text-indigo-500">
+                    <span class="flex items-center gap-2 shrink-0"><i class="fa-solid fa-code-branch w-5 text-center"></i><span class="sidebar-label">Versi Portal</span></span>
+                    <span id="sidebar-portal-version" class="sidebar-label px-2 py-0.5 rounded-lg bg-indigo-600 text-white text-[10px]">GZI Versi 1.0.0</span>
+                </div>
             </div>
         </aside>
 
@@ -160,9 +164,14 @@
                     <!-- Hero Banner -->
                     <div class="relative overflow-hidden rounded-3xl bg-gradient-to-r from-indigo-600 via-purple-600 to-fuchsia-600 p-6 sm:p-8 text-white shadow-xl shadow-indigo-500/20">
                         <div class="relative z-10 max-w-2xl space-y-3">
-                            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/15 backdrop-blur-md text-xs font-bold">
-                                <i class="fa-solid fa-bolt text-amber-300"></i> Main Langsung Tanpa Install & Sinkron Cloud
-                            </span>
+                            <div class="flex flex-wrap items-center gap-2">
+                                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/15 backdrop-blur-md text-xs font-bold">
+                                    <i class="fa-solid fa-bolt text-amber-300"></i> Main Langsung Tanpa Install & Sinkron Cloud
+                                </span>
+                                <span id="hero-portal-version" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-slate-950/35 border border-white/20 text-[11px] font-extrabold">
+                                    GZI Versi 1.0.0
+                                </span>
+                            </div>
                             <h1 class="text-2xl sm:text-4xl font-black tracking-tight leading-tight">
                                 Jelajahi Dunia Game HTML5 & Top Up Instan dalam Satu Portal!
                             </h1>
@@ -277,6 +286,22 @@
                                         <button onclick="openTopupCheckout(50000)" class="py-2.5 px-3 rounded-2xl bg-white/10 hover:bg-indigo-600 border border-white/15 font-extrabold text-xs transition-all">+ Rp 50.000</button>
                                         <button onclick="openTopupCheckout(100000)" class="py-2.5 px-3 rounded-2xl bg-white/10 hover:bg-indigo-600 border border-white/15 font-extrabold text-xs transition-all">+ Rp 100.000</button>
                                     </div>
+                                </div>
+
+                                <!-- Kotak Redeem Kupon Saldo Gratis Langsung -->
+                                <div class="pt-3 border-t border-white/15 space-y-2.5">
+                                    <div class="flex items-center justify-between text-xs">
+                                        <span class="font-extrabold text-amber-300"><i class="fa-solid fa-ticket mr-1.5"></i>Redeem Kode Kupon (1x Klaim per Kode Kupon)</span>
+                                        <span id="wallet-claimed-coupon-badge" class="hidden text-[11px] font-bold text-emerald-300"></span>
+                                    </div>
+                                    <form onsubmit="redeemDirectCoupon(event)" autocomplete="off" class="flex gap-2">
+                                        <input id="wallet-direct-coupon-input" name="portal_coupon_redeem" type="text" autocomplete="off" autocorrect="off" autocapitalize="characters" spellcheck="false" placeholder="Masukkan kode kupon (misal: SALDO5000)" class="flex-1 px-3.5 py-2.5 rounded-2xl bg-white/10 border border-white/20 text-white placeholder-indigo-200/70 text-xs font-black uppercase tracking-wider outline-none focus:border-amber-400">
+                                        <button type="submit" id="wallet-direct-coupon-btn" class="px-4 py-2.5 rounded-2xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs shrink-0 transition-all">
+                                            Redeem
+                                        </button>
+                                    </form>
+                                    <!-- Etalase Kupon Aktif yang Dipublish Admin -->
+                                    <div id="wallet-available-coupons-box" class="space-y-1.5 pt-1"></div>
                                 </div>
                             </div>
 
@@ -417,6 +442,7 @@
                         <div class="flex flex-wrap gap-2">
                             <button onclick="switchAdminTab('games')" id="admin-tab-btn-games" class="admin-tab-btn px-4 py-2 rounded-2xl text-xs font-extrabold bg-indigo-600 text-white">🎮 Kelola Game & Toko</button>
                             <button onclick="switchAdminTab('topup')" id="admin-tab-btn-topup" class="admin-tab-btn px-4 py-2 rounded-2xl text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">💳 Top Up & QRIS</button>
+                            <button onclick="switchAdminTab('coupons')" id="admin-tab-btn-coupons" class="admin-tab-btn px-4 py-2 rounded-2xl text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">🎟️ Kelola Kupon</button>
                             <button onclick="switchAdminTab('gateway')" id="admin-tab-btn-gateway" class="admin-tab-btn px-4 py-2 rounded-2xl text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">🏦 Payment Gateway</button>
                             <button onclick="switchAdminTab('sdk')" id="admin-tab-btn-sdk" class="admin-tab-btn px-4 py-2 rounded-2xl text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">🔌 SDK & Deteksi Item</button>
                             <button onclick="switchAdminTab('branding')" id="admin-tab-btn-branding" class="admin-tab-btn px-4 py-2 rounded-2xl text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">🎨 Logo & Favicon</button>
@@ -442,10 +468,14 @@
                                     <option value="url">Tipe Sumber: URL Game (HTTPS / iFrame)</option>
                                     <option value="html">Tipe Sumber: Kode HTML Lengkap</option>
                                 </select>
-                                <input id="admin-game-thumb" type="text" placeholder="URL Thumbnail (Opsional)" class="px-4 py-2.5 rounded-2xl bg-slate-100 dark:bg-slate-800 text-sm outline-none">
+                                <div class="grid grid-cols-3 gap-2">
+                                    <input id="admin-game-thumb" type="text" placeholder="URL Thumbnail (Opsional)" class="col-span-2 px-4 py-2.5 rounded-2xl bg-slate-100 dark:bg-slate-800 text-sm outline-none">
+                                    <input id="admin-game-version" type="text" placeholder="Versi (Auto)" title="Kosongkan untuk deteksi versi otomatis dari URL/iFrame/HTML" class="col-span-1 px-3 py-2.5 rounded-2xl bg-slate-100 dark:bg-slate-800 text-xs font-bold outline-none">
+                                </div>
                                 <div class="md:col-span-2">
-                                    <input id="admin-game-url" type="text" placeholder="Masukkan URL Game HTTPS atau tempel tag <iframe src='...'></iframe>" class="w-full px-4 py-2.5 rounded-2xl bg-slate-100 dark:bg-slate-800 text-sm outline-none">
-                                    <textarea id="admin-game-html" rows="5" placeholder="Tempel kode HTML lengkap game di sini..." class="hidden w-full px-4 py-2.5 rounded-2xl bg-slate-100 dark:bg-slate-800 text-xs font-mono outline-none"></textarea>
+                                    <input id="admin-game-url" type="text" oninput="previewDetectedGameVersion()" placeholder="Masukkan URL Game HTTPS atau tempel tag <iframe src='...'></iframe>" class="w-full px-4 py-2.5 rounded-2xl bg-slate-100 dark:bg-slate-800 text-sm outline-none">
+                                    <textarea id="admin-game-html" rows="5" oninput="previewDetectedGameVersion()" placeholder="Tempel kode HTML lengkap game di sini..." class="hidden w-full px-4 py-2.5 rounded-2xl bg-slate-100 dark:bg-slate-800 text-xs font-mono outline-none"></textarea>
+                                    <div id="detected-version-hint" class="mt-1.5 text-[11px] font-bold text-indigo-500">ℹ️ Versi otomatis: v1.0.0 (terdeteksi otomatis dari URL, atribut iframe, atau kode HTML)</div>
                                 </div>
                                 <div class="md:col-span-2 flex flex-wrap items-center justify-between gap-3">
                                     <button type="button" onclick="scanHtmlShopItems()" class="px-4 py-2.5 rounded-2xl bg-amber-500/15 text-amber-600 dark:text-amber-400 font-bold text-xs hover:bg-amber-500/25">
@@ -569,6 +599,72 @@
                         </div>
                     </div>
 
+                    <!-- TAB ADMIN: KELOLA KUPON & KODE PROMO -->
+                    <div id="admin-panel-coupons" class="hidden space-y-6">
+                        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                            <!-- Form Tambah / Edit Kupon -->
+                            <div class="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/80 dark:border-slate-800 p-6 space-y-4">
+                                <div class="flex items-center justify-between">
+                                    <h3 id="admin-coupon-form-title" class="font-extrabold text-base flex items-center gap-2">
+                                        <i class="fa-solid fa-ticket text-amber-500"></i> Buat Kupon Baru
+                                    </h3>
+                                    <button type="button" id="admin-coupon-cancel-edit" onclick="resetAdminCouponForm()" class="hidden text-xs font-bold text-rose-500 hover:underline">Batal Edit</button>
+                                </div>
+                                <form onsubmit="saveAdminCoupon(event)" class="space-y-3">
+                                    <input type="hidden" id="admin-coupon-edit-id">
+                                    <div>
+                                        <label class="text-[11px] font-bold text-slate-400">Kode Kupon (Huruf Kapital)</label>
+                                        <input id="admin-coupon-code" type="text" required placeholder="Contoh: GZIBONUS20" class="w-full mt-1 px-4 py-2.5 rounded-2xl bg-slate-100 dark:bg-slate-800 text-sm font-black uppercase tracking-wider outline-none">
+                                    </div>
+                                    <div>
+                                        <label class="text-[11px] font-bold text-slate-400">Jenis Kupon</label>
+                                        <select id="admin-coupon-type" class="w-full mt-1 px-4 py-2.5 rounded-2xl bg-slate-100 dark:bg-slate-800 text-xs font-bold outline-none">
+                                            <option value="topup_bonus_pct">Bonus Top Up Persentase (%)</option>
+                                            <option value="topup_bonus_flat">Bonus Top Up Nominal Tetap (Rp)</option>
+                                            <option value="redeem_balance">Klaim Saldo Gratis Langsung (Rp)</option>
+                                        </select>
+                                    </div>
+                                    <div class="grid grid-cols-2 gap-2.5">
+                                        <div>
+                                            <label class="text-[11px] font-bold text-slate-400">Nilai (% atau Rp)</label>
+                                            <input id="admin-coupon-value" type="number" min="1" required placeholder="10" class="w-full mt-1 px-3.5 py-2.5 rounded-2xl bg-slate-100 dark:bg-slate-800 text-sm font-bold outline-none">
+                                        </div>
+                                        <div>
+                                            <label class="text-[11px] font-bold text-slate-400">Kuota Pemakaian</label>
+                                            <input id="admin-coupon-quota" type="number" min="1" required value="50" class="w-full mt-1 px-3.5 py-2.5 rounded-2xl bg-slate-100 dark:bg-slate-800 text-sm font-bold outline-none">
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label class="text-[11px] font-bold text-slate-400">Min. Top Up (Rp, isi 0 jika tanpa syarat)</label>
+                                        <input id="admin-coupon-min-topup" type="number" min="0" value="0" class="w-full mt-1 px-4 py-2.5 rounded-2xl bg-slate-100 dark:bg-slate-800 text-sm outline-none">
+                                    </div>
+                                    <div>
+                                        <label class="text-[11px] font-bold text-slate-400">Keterangan Promo</label>
+                                        <input id="admin-coupon-desc" type="text" placeholder="Contoh: Bonus Top Up Akhir Pekan!" class="w-full mt-1 px-4 py-2.5 rounded-2xl bg-slate-100 dark:bg-slate-800 text-xs outline-none">
+                                    </div>
+                                    <label class="flex items-center gap-2 text-xs font-bold cursor-pointer pt-1">
+                                        <input id="admin-coupon-active" type="checkbox" checked class="w-4 h-4 rounded text-indigo-600">
+                                        Status Kupon Aktif (Bisa Dipakai Pemain)
+                                    </label>
+                                    <button type="submit" id="admin-coupon-submit-btn" class="w-full py-2.5 rounded-2xl bg-indigo-600 hover:bg-indigo-500 text-white font-extrabold text-sm">
+                                        <i class="fa-solid fa-save mr-1.5"></i>Simpan Kupon
+                                    </button>
+                                </form>
+                            </div>
+
+                            <!-- Daftar Kupon yang Bisa Diedit Admin -->
+                            <div class="lg:col-span-2 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/80 dark:border-slate-800 p-6 space-y-4">
+                                <div class="flex items-center justify-between">
+                                    <h3 class="font-extrabold text-base flex items-center gap-2">
+                                        <i class="fa-solid fa-tags text-indigo-500"></i> Daftar Kupon & Kode Promo
+                                    </h3>
+                                    <span id="admin-coupons-count" class="text-xs font-bold text-slate-400">0 Kupon</span>
+                                </div>
+                                <div id="admin-coupons-list" class="space-y-3 max-h-[460px] overflow-y-auto pr-1"></div>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- TAB ADMIN 3: PAYMENT GATEWAY -->
                     <div id="admin-panel-gateway" class="hidden bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/80 dark:border-slate-800 p-6 space-y-4">
                         <h3 class="font-extrabold text-base flex items-center gap-2">
@@ -643,6 +739,11 @@
                                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
                                     <input id="admin-brand-name" type="text" placeholder="Nama Portal (misal: GameZone ID)" class="px-3 py-2 rounded-xl bg-white dark:bg-slate-900 text-xs font-bold outline-none">
                                     <input id="admin-brand-tagline" type="text" placeholder="Tagline (misal: Portal & Wallet)" class="px-3 py-2 rounded-xl bg-white dark:bg-slate-900 text-xs outline-none">
+                                </div>
+                                <div class="flex items-center gap-2 pt-1">
+                                    <span class="text-[11px] font-bold text-slate-500 shrink-0">Versi Portal:</span>
+                                    <input id="admin-portal-version" type="text" placeholder="GZI Versi 1.0.0" class="flex-1 px-3 py-1.5 rounded-xl bg-white dark:bg-slate-900 text-xs font-extrabold text-indigo-500 outline-none">
+                                    <button type="button" onclick="bumpPortalVersion(true)" class="px-3 py-1.5 rounded-xl bg-indigo-600/15 hover:bg-indigo-600/25 text-indigo-500 text-xs font-extrabold">+ Naik Versi</button>
                                 </div>
                             </div>
 
@@ -844,6 +945,10 @@
                     <span>Nominal Top Up</span>
                     <span id="topup-modal-amount" class="font-bold text-slate-700 dark:text-slate-200">Rp 0</span>
                 </div>
+                <div id="topup-coupon-bonus-row" class="hidden flex items-center justify-between text-xs text-emerald-500">
+                    <span id="topup-coupon-bonus-label">Bonus Kupon Promo</span>
+                    <span id="topup-coupon-bonus-amount" class="font-extrabold">+ Rp 0</span>
+                </div>
                 <div class="flex items-center justify-between text-xs text-slate-400">
                     <span id="topup-fee-label">Komisi / Biaya Layanan (0.7%)</span>
                     <span id="topup-fee-amount" class="font-bold text-amber-500">Rp 0</span>
@@ -853,6 +958,15 @@
                     <span id="topup-total-pay" class="text-xl font-black text-indigo-500">Rp 0</span>
                 </div>
                 <div id="topup-net-credit-info" class="text-[11px] font-semibold text-emerald-500 text-right">Saldo diterima: Rp 0</div>
+            </div>
+
+            <!-- Input Kode Kupon Promo / Klaim Kupon -->
+            <div class="p-3 rounded-2xl bg-slate-100 dark:bg-slate-800/80 space-y-2">
+                <div class="flex items-center gap-2">
+                    <input id="topup-coupon-input" type="text" placeholder="Masukkan Kode Kupon Promo..." class="flex-1 px-3 py-2 rounded-xl bg-white dark:bg-slate-900 text-xs font-bold uppercase tracking-wider outline-none">
+                    <button type="button" onclick="applyTopupCoupon()" class="px-3.5 py-2 rounded-xl bg-amber-500 hover:bg-amber-600 text-white text-xs font-extrabold shrink-0">Pakai Kupon</button>
+                </div>
+                <div id="topup-coupon-status" class="hidden text-[11px] font-bold"></div>
             </div>
 
             <!-- Pilihan 3 Metode: QRIS Bank, ShopeePay, QRIS DANA -->
@@ -969,6 +1083,7 @@ window.addEventListener('message',e=>{const m=e.data||{};if(m.type==='GZ_PURCHAS
             currentUser: null,
             theme: 'dark',
             appScriptUrl: DEFAULT_APPSCRIPT_URL,
+            portalVersion: 'GZI Versi 1.0.0',
             branding: {
                 siteName: 'GameZone ID',
                 tagline: 'Portal & Wallet',
@@ -1039,6 +1154,7 @@ window.addEventListener('message',e=>{const m=e.data||{};if(m.type==='GZ_PURCHAS
                     id: 'game_galaxy_defender',
                     title: 'Galaxy Defender HTML5',
                     category: 'Aksi',
+                    version: 'v1.2.0',
                     sourceType: 'html',
                     sourceCode: BUILTIN_SPACE_HTML,
                     thumbnail: 'https://placehold.co/600x360/1e1b4b/818cf8?text=Galaxy+Defender',
@@ -1055,6 +1171,7 @@ window.addEventListener('message',e=>{const m=e.data||{};if(m.type==='GZ_PURCHAS
                     id: 'game_crystal_miner',
                     title: 'Crystal Miner Tycoon',
                     category: 'Arcade',
+                    version: 'v1.0.5',
                     sourceType: 'html',
                     sourceCode: BUILTIN_CLICKER_HTML,
                     thumbnail: 'https://placehold.co/600x360/311042/f472b6?text=Crystal+Miner',
@@ -1068,6 +1185,32 @@ window.addEventListener('message',e=>{const m=e.data||{};if(m.type==='GZ_PURCHAS
                 }
             ],
             topupRequests: [],
+            coupons: [
+                {
+                    id: 'cpn_welcome10',
+                    code: 'GZIBONUS10',
+                    type: 'topup_bonus_pct',
+                    value: 10,
+                    minTopup: 10000,
+                    quota: 100,
+                    usedCount: 0,
+                    usedBy: [],
+                    desc: 'Bonus saldo 10% untuk setiap Top Up minimal Rp 10.000!',
+                    active: true
+                },
+                {
+                    id: 'cpn_gratis5k',
+                    code: 'SALDO5000',
+                    type: 'redeem_balance',
+                    value: 5000,
+                    minTopup: 0,
+                    quota: 50,
+                    usedCount: 0,
+                    usedBy: [],
+                    desc: 'Klaim saldo gratis langsung Rp 5.000 ke dompet Anda!',
+                    active: true
+                }
+            ],
             chatMessages: [
                 { id: 'm1', channel: 'global', user: 'Raka Gamer', role: 'player', text: 'Halo semua! Galaxy Defender seru banget dimainkan langsung di browser!', time: '19:30' },
                 { id: 'm2', channel: 'lfg', user: 'Administrator', role: 'admin', text: 'Selamat datang di obrolan mabar GameZone ID! Jangan lupa klaim prestasi bermainmu.', time: '19:35' }
@@ -1082,6 +1225,7 @@ window.addEventListener('message',e=>{const m=e.data||{};if(m.type==='GZ_PURCHAS
         let activeGameId = null;
         let pendingTopupAmount = 0;
         let selectedTopupMethod = 'qris';
+        let appliedTopupCoupon = null;
         let pendingOtpData = null;
         let editingShopGameId = null;
         let autoSyncTimer = null;
@@ -1112,6 +1256,7 @@ window.addEventListener('message',e=>{const m=e.data||{};if(m.type==='GZ_PURCHAS
                         users: parsed.users || DEFAULT_STATE.users,
                         games: Array.isArray(parsed.games) && parsed.games.length ? parsed.games : DEFAULT_STATE.games,
                         topupRequests: parsed.topupRequests || [],
+                        coupons: Array.isArray(parsed.coupons) ? parsed.coupons : DEFAULT_STATE.coupons,
                         chatMessages: parsed.chatMessages || DEFAULT_STATE.chatMessages
                     };
                 } else {
@@ -1191,14 +1336,19 @@ window.addEventListener('message',e=>{const m=e.data||{};if(m.type==='GZ_PURCHAS
             const b = (appState && appState.branding) || DEFAULT_STATE.branding;
             const siteName = b.siteName || 'GameZone ID';
             const tagline = b.tagline || 'Portal & Wallet';
+            const pVer = normalizePortalVersionTag(appState.portalVersion || 'GZI Versi 1.0.0');
 
-            document.title = `${siteName} - ${tagline}`;
+            document.title = `${siteName} (${pVer}) - ${tagline}`;
 
             const nameEl = document.getElementById('sidebar-brand-name');
             const tagEl = document.getElementById('sidebar-brand-tagline');
             const logoBox = document.getElementById('sidebar-brand-logo-box');
+            const sbVer = document.getElementById('sidebar-portal-version');
+            const heroVer = document.getElementById('hero-portal-version');
             if (nameEl) nameEl.textContent = siteName;
             if (tagEl) tagEl.textContent = tagline;
+            if (sbVer) sbVer.textContent = pVer;
+            if (heroVer) heroVer.textContent = pVer;
 
             if (logoBox) {
                 if (b.logoUrl) {
@@ -1214,12 +1364,107 @@ window.addEventListener('message',e=>{const m=e.data||{};if(m.type==='GZ_PURCHAS
             }
         }
 
+        // ==================== SISTEM VERSI OTOMATIS PORTAL & GAME ====================
+        function extractSemanticNumbers(ver) {
+            const match = String(ver || '').match(/(\d+)\.(\d+)(?:\.(\d+))?/);
+            if (!match) return [1, 0, 0];
+            return [
+                parseInt(match[1], 10) || 1,
+                parseInt(match[2], 10) || 0,
+                parseInt(match[3], 10) || 0
+            ];
+        }
+
+        function normalizePortalVersionTag(ver) {
+            const [major, minor, patch] = extractSemanticNumbers(ver);
+            return `GZI Versi ${major}.${minor}.${patch}`;
+        }
+
+        function incrementPortalPatchVersion(ver) {
+            const [major, minor, patch] = extractSemanticNumbers(ver);
+            return `GZI Versi ${major}.${minor}.${patch + 1}`;
+        }
+
+        function normalizeVersionTag(ver) {
+            const clean = String(ver || '').trim().replace(/^(?:GZI\s*Versi\s*|v+)/i, '');
+            if (!clean) return 'v1.0.0';
+            return 'v' + clean;
+        }
+
+        function incrementPatchVersion(ver) {
+            const clean = String(ver || '1.0.0').trim().replace(/^(?:GZI\s*Versi\s*|v+)/i, '');
+            const parts = clean.split('.').map(n => parseInt(n, 10));
+            if (parts.length >= 3 && !isNaN(parts[2])) {
+                parts[2] += 1;
+                return 'v' + parts.join('.');
+            }
+            if (parts.length === 2 && !isNaN(parts[1])) {
+                return `v${parts[0]}.${parts[1]}.1`;
+            }
+            if (parts.length === 1 && !isNaN(parts[0])) {
+                return `v${parts[0]}.0.1`;
+            }
+            return 'v1.0.1';
+        }
+
+        function detectGameVersionFromSource(sourceType, rawUrlOrIframe, htmlCode) {
+            const text = sourceType === 'html' ? (htmlCode || '') : (rawUrlOrIframe || '');
+            if (!text.trim()) return 'v1.0.0';
+
+            const metaOrAttr = text.match(/(?:data-version|name=["']version["'][^>]*content|version)\s*=\s*["']v?(\d+\.\d+(?:\.\d+)?)["']/i);
+            if (metaOrAttr && metaOrAttr[1]) return normalizeVersionTag(metaOrAttr[1]);
+
+            const jsVer = text.match(/(?:GAME_VERSION|APP_VERSION|VERSION|version)\s*[:=]\s*["']v?(\d+\.\d+(?:\.\d+)?)["']/);
+            if (jsVer && jsVer[1]) return normalizeVersionTag(jsVer[1]);
+
+            const urlQueryVer = text.match(/[?&](?:v|ver|version)=v?(\d+\.\d+(?:\.\d+)?)/i);
+            if (urlQueryVer && urlQueryVer[1]) return normalizeVersionTag(urlQueryVer[1]);
+
+            const urlPathVer = text.match(/\/v(\d+\.\d+(?:\.\d+)?)(?:\/|$|\?)/i);
+            if (urlPathVer && urlPathVer[1]) return normalizeVersionTag(urlPathVer[1]);
+
+            return 'v1.0.0';
+        }
+
+        function previewDetectedGameVersion() {
+            const sourceType = document.getElementById('admin-game-type').value;
+            const rawUrl = document.getElementById('admin-game-url').value;
+            const htmlCode = document.getElementById('admin-game-html').value;
+            const detected = detectGameVersionFromSource(sourceType, rawUrl, htmlCode);
+            const hint = document.getElementById('detected-version-hint');
+            if (hint) {
+                hint.textContent = `ℹ️ Versi game terdeteksi: ${detected} • Versi Portal setelah publikasi: ${incrementPortalPatchVersion(appState.portalVersion || 'GZI Versi 1.0.0')}`;
+            }
+        }
+
+        function bumpPortalVersion(notify = false) {
+            appState.portalVersion = incrementPortalPatchVersion(appState.portalVersion || 'GZI Versi 1.0.0');
+            const input = document.getElementById('admin-portal-version');
+            if (input) input.value = appState.portalVersion;
+            applyBranding();
+            if (notify) {
+                saveState();
+                showToast(`Versi Portal diperbarui otomatis ke ${appState.portalVersion}!`, 'success');
+            }
+        }
+
+        function bumpGameVersion(gameId) {
+            const game = (appState.games || []).find(g => String(g.id) === String(gameId));
+            if (!game) return;
+            game.version = incrementPatchVersion(game.version || 'v1.0.0');
+            game.isNew = true;
+            bumpPortalVersion(false);
+            saveState();
+            renderAdminPanel();
+            renderGamesGrid();
+            showToast(`Versi "${game.title}" naik ke ${game.version} (${appState.portalVersion})!`, 'success');
+        }
+
         function syncAchievementsToProfile(notify = false) {
             const user = getActiveUser();
             if (!user) return;
             user.achievements = Array.isArray(user.achievements) ? user.achievements : [];
 
-            // Pastikan prestasi otomatis berdasarkan progres game, transaksi & item ikut tersinkronisasi
             const existingIds = new Set(user.achievements.map(a => a.id));
             const today = new Date().toLocaleDateString('id-ID');
 
@@ -1254,7 +1499,6 @@ window.addEventListener('message',e=>{const m=e.data||{};if(m.type==='GZ_PURCHAS
                 });
             }
 
-            // Sinkronkan ringkasan prestasi ke profil akun
             user.profileAchievements = user.achievements.map(a => ({
                 id: a.id,
                 title: a.title,
@@ -1264,7 +1508,7 @@ window.addEventListener('message',e=>{const m=e.data||{};if(m.type==='GZ_PURCHAS
             }));
 
             saveState(notify);
-            if (currentView === 'wallet') renderWalletView();
+            if (notify && currentView === 'wallet') renderWalletView();
             renderEditProfileAchievementsPreview();
             if (notify) {
                 showToast(`✅ ${user.profileAchievements.length} catatan prestasi berhasil disinkronkan ke profil akun!`, 'success');
@@ -1464,7 +1708,10 @@ window.addEventListener('message',e=>{const m=e.data||{};if(m.type==='GZ_PURCHAS
                         </div>
                         <div class="p-4 space-y-2">
                             <div class="flex items-center justify-between text-[11px] font-bold text-indigo-500">
-                                <span>${escapeHtml(g.category)}</span>
+                                <span class="flex items-center gap-1.5">
+                                    <span>${escapeHtml(g.category)}</span>
+                                    <span class="px-2 py-0.5 rounded-md bg-indigo-500/10 text-indigo-500 text-[10px] font-extrabold">${escapeHtml(normalizeVersionTag(g.version || 'v1.0.0'))}</span>
+                                </span>
                                 <span class="text-slate-400"><i class="fa-solid fa-gamepad mr-1"></i>${(g.plays || 0).toLocaleString('id-ID')}x dimainkan</span>
                             </div>
                             <h3 class="font-extrabold text-base leading-snug line-clamp-1">${escapeHtml(g.title)}</h3>
@@ -1489,9 +1736,19 @@ window.addEventListener('message',e=>{const m=e.data||{};if(m.type==='GZ_PURCHAS
                 openAuthModal('login');
                 return;
             }
-        function handleSearch(val) {
-            searchQuery = (val || '').trim().toLowerCase();
-            if (currentView !== 'catalog') navigateTo('catalog');
+            const game = (appState.games || []).find(g => String(g.id) === String(gameId));
+            if (!game) return;
+            game.likedBy = Array.isArray(game.likedBy) ? game.likedBy : [];
+            const idx = game.likedBy.indexOf(user.username);
+            if (idx === -1) {
+                game.likedBy.push(user.username);
+                game.likes = (game.likes || 0) + 1;
+                showToast(`Menyukai ${game.title}!`, 'success');
+            } else {
+                game.likedBy.splice(idx, 1);
+                game.likes = Math.max(0, (game.likes || 1) - 1);
+            }
+            saveState();
             renderGamesGrid();
         }
 
@@ -1543,7 +1800,6 @@ window.addEventListener('message',e=>{const m=e.data||{};if(m.type==='GZ_PURCHAS
         function normalizeGameUrl(rawInput) {
             let val = (rawInput || '').trim();
             if (!val) return '';
-            // Ekstrak otomatis jika admin menempelkan tag <iframe src="..."></iframe>
             const iframeMatch = val.match(/<iframe[^>]+src=["']([^"']+)["']/i);
             if (iframeMatch && iframeMatch[1]) {
                 val = iframeMatch[1].trim();
@@ -1582,7 +1838,7 @@ window.addEventListener('message',e=>{const m=e.data||{};if(m.type==='GZ_PURCHAS
             saveState();
 
             document.getElementById('player-game-title').textContent = game.title;
-            document.getElementById('player-game-meta').textContent = `${game.category} • ${(game.plays || 0).toLocaleString('id-ID')}x dimainkan`;
+            document.getElementById('player-game-meta').textContent = `${game.category} • ${normalizeVersionTag(game.version || 'v1.0.0')} • ${(game.plays || 0).toLocaleString('id-ID')}x dimainkan`;
             updateHeaderUI();
 
             const iframe = document.getElementById('game-iframe');
@@ -1770,7 +2026,7 @@ window.addEventListener('message',e=>{const m=e.data||{};if(m.type==='GZ_PURCHAS
             if (msg.type === 'GZ_REGISTER_ITEMS' && activeGameId && Array.isArray(msg.items)) {
                 const game = appState.games.find(g => g.id === activeGameId);
                 if (game && (!game.shopItems || game.shopItems.length === 0)) {
-                    game.shopItems = msg.items;
+                    game.shopItems = msg.items.map(i => ({ id: i.id, name: i.name, price: Number(i.price) }));
                     saveState();
                     renderPlayerShopDrawer();
                 }
@@ -1791,7 +2047,7 @@ window.addEventListener('message',e=>{const m=e.data||{};if(m.type==='GZ_PURCHAS
             }
         });
 
-        // ==================== DOMPET, TOP UP (QRIS BANK, SHOPEEPAY, DANA) & PROFIL ====================
+        // ==================== DOMPET, PROFIL, PRESTASI & TOP UP ====================
         function renderWalletView() {
             const user = getActiveUser();
             const guestBanner = document.getElementById('wallet-guest-banner');
@@ -1803,95 +2059,344 @@ window.addEventListener('message',e=>{const m=e.data||{};if(m.type==='GZ_PURCHAS
             }
             guestBanner.classList.add('hidden');
             userContent.classList.remove('hidden');
-
             syncAchievementsToProfile(false);
+
+            document.getElementById('wallet-main-balance').textContent = formatRupiah(user.balance || 0);
+            document.getElementById('wallet-user-info').textContent = `${user.name} (@${user.username}) • ${user.email}`;
+
+            // Migrasi kompatibilitas daftar kupon yang sudah pernah diklaim akun ini
+            user.claimedCoupons = Array.isArray(user.claimedCoupons) ? user.claimedCoupons : [];
+            if (user.claimedCouponCode && !user.claimedCoupons.includes(user.claimedCouponCode)) {
+                user.claimedCoupons.push(user.claimedCouponCode);
+            }
+
+            // Status Kupon pada Kartu Dompet (1x klaim per kode kupon, tetap bisa klaim kupon berbeda)
+            const claimedBadge = document.getElementById('wallet-claimed-coupon-badge');
+            const directInput = document.getElementById('wallet-direct-coupon-input');
+            const directBtn = document.getElementById('wallet-direct-coupon-btn');
+            if (claimedBadge && directInput && directBtn) {
+                if (user.claimedCoupons.length > 0) {
+                    claimedBadge.classList.remove('hidden');
+                    claimedBadge.textContent = `✅ ${user.claimedCoupons.length} kupon diklaim`;
+                } else {
+                    claimedBadge.classList.add('hidden');
+                }
+                directInput.value = '';
+                directInput.placeholder = 'Masukkan kode kupon (misal: SALDO5000)';
+                directInput.disabled = false;
+                directBtn.disabled = false;
+                directBtn.textContent = 'Redeem';
+                directBtn.className = 'px-4 py-2.5 rounded-2xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs shrink-0 transition-all';
+            }
+            renderWalletAvailableCoupons(user);
 
             const avatarBox = document.getElementById('wallet-profile-avatar');
             if (avatarBox) {
                 if (user.avatarUrl) {
-                    avatarBox.innerHTML = `<img src="${user.avatarUrl}" alt="${user.name}" class="w-full h-full object-cover">`;
+                    avatarBox.innerHTML = `<img src="${user.avatarUrl}" alt="${escapeHtml(user.name)}" class="w-full h-full object-cover">`;
                 } else {
-                    avatarBox.textContent = (user.name || 'P').charAt(0).toUpperCase();
+                    avatarBox.textContent = (user.name ? user.name.charAt(0) : 'P').toUpperCase();
                 }
             }
 
-            document.getElementById('wallet-main-balance').textContent = formatRupiah(user.balance || 0);
-            document.getElementById('wallet-user-info').textContent = `${user.name} (@${user.username}) • ${user.email || 'Belum ada email'}`;
-
-            const achs = user.profileAchievements || user.achievements || [];
+            const syncedAchievements = user.profileAchievements || user.achievements || [];
             const badgesBox = document.getElementById('wallet-profile-badges');
             if (badgesBox) {
-                badgesBox.innerHTML = achs.slice(0, 3).map(a => `
-                    <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-amber-400/20 border border-amber-300/30 text-amber-200 text-[10px] font-bold">
-                        🏆 ${a.title}
-                    </span>
-                `).join('');
+                badgesBox.innerHTML = syncedAchievements.slice(0, 3).map(a => `
+                    <span class="px-2 py-0.5 rounded-full bg-amber-400/20 border border-amber-300/30 text-amber-200 text-[10px] font-bold">🏆 ${escapeHtml(a.title)}</span>
+                `).join('') + (syncedAchievements.length > 3 ? `<span class="px-2 py-0.5 rounded-full bg-white/15 text-white text-[10px] font-bold">+${syncedAchievements.length - 3} lainnya</span>` : '');
             }
 
             document.getElementById('wallet-stat-points').textContent = (user.points || 0).toLocaleString('id-ID');
             document.getElementById('wallet-stat-items').textContent = (user.inventory || []).length;
-            document.getElementById('wallet-stat-achievements').textContent = achs.length;
+            document.getElementById('wallet-stat-achievements').textContent = syncedAchievements.length;
             document.getElementById('wallet-stat-saves').textContent = Object.keys(user.savedProgress || {}).length;
 
-            // Prestasi
-            document.getElementById('wallet-achievements-count').textContent = `${achs.length} Prestasi`;
-            document.getElementById('wallet-achievements-list').innerHTML = achs.length ? achs.map(a => `
+            // Render Catatan Prestasi Bermain
+            const achList = document.getElementById('wallet-achievements-list');
+            document.getElementById('wallet-achievements-count').textContent = `${syncedAchievements.length} Prestasi`;
+            achList.innerHTML = syncedAchievements.length ? syncedAchievements.map(a => `
                 <div class="p-3.5 rounded-2xl bg-amber-500/10 border border-amber-500/20 space-y-1">
                     <div class="flex items-center justify-between gap-2">
-                        <span class="font-extrabold text-xs text-amber-600 dark:text-amber-400">🏆 ${a.title}</span>
-                        <span class="text-[10px] text-slate-400">${a.date || ''}</span>
+                        <span class="font-extrabold text-xs text-amber-600 dark:text-amber-400">🏆 ${escapeHtml(a.title)}</span>
+                        <span class="text-[10px] text-slate-400 shrink-0">${escapeHtml(a.date || '')}</span>
                     </div>
-                    <p class="text-[11px] text-slate-600 dark:text-slate-300">${a.desc}</p>
-                    <div class="flex items-center justify-between pt-0.5">
-                        <span class="inline-block text-[10px] font-bold px-2 py-0.5 rounded-md bg-slate-200/70 dark:bg-slate-800 text-slate-500">${a.gameTitle || 'GameZone ID'}</span>
-                        <span class="text-[10px] font-bold text-emerald-500"><i class="fa-solid fa-circle-check mr-0.5"></i>Profil</span>
-                    </div>
+                    <p class="text-[11px] text-slate-600 dark:text-slate-300">${escapeHtml(a.desc || '')}</p>
+                    <div class="text-[10px] font-bold text-indigo-500">${escapeHtml(a.gameTitle || 'GameZone ID')}</div>
                 </div>
-            `).join('') : `<div class="col-span-full text-xs text-slate-400 py-4">Belum ada prestasi. Mainkan game untuk membuka prestasi!</div>`;
+            `).join('') : `<div class="col-span-full text-xs text-slate-400 py-6 text-center">Belum ada prestasi terbuka. Mainkan game untuk membuka prestasi!</div>`;
 
-            // Inventori
-            const inv = user.inventory || [];
-            document.getElementById('wallet-inventory-list').innerHTML = inv.length ? inv.map(it => `
-                <div class="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/70 flex items-center justify-between">
-                    <div>
-                        <div class="font-bold text-xs">${it.name}</div>
-                        <div class="text-[11px] text-slate-400">${it.gameTitle || 'GameZone ID'} • ${it.purchasedAt || ''}</div>
+            // Render Inventori Item Permanen
+            const invList = document.getElementById('wallet-inventory-list');
+            const items = user.inventory || [];
+            invList.innerHTML = items.length ? items.map(it => `
+                <div class="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/70 flex items-center justify-between gap-2">
+                    <div class="min-w-0">
+                        <div class="font-bold text-xs truncate">${escapeHtml(it.name)}</div>
+                        <div class="text-[11px] text-slate-400 truncate">${escapeHtml(it.gameTitle || 'GameZone ID')} • ${escapeHtml(it.purchasedAt || '')}</div>
                     </div>
-                    <span class="text-xs font-extrabold text-emerald-500">${formatRupiah(it.price)}</span>
+                    <span class="px-2.5 py-1 rounded-xl bg-emerald-500/15 text-emerald-500 text-[10px] font-extrabold shrink-0">Permanen</span>
                 </div>
-            `).join('') : `<div class="text-xs text-slate-400 py-4">Belum ada item yang dibeli.</div>`;
+            `).join('') : `<div class="text-xs text-slate-400 py-6 text-center">Inventori masih kosong.</div>`;
 
-            // Riwayat Transaksi
-            const txs = user.transactions || [];
-            document.getElementById('wallet-transactions-list').innerHTML = txs.length ? txs.map(t => `
-                <div class="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/70 flex items-center justify-between gap-2 text-xs">
-                    <div>
-                        <div class="font-bold">${t.label}</div>
-                        <div class="text-[11px] text-slate-400">${t.date} • <span class="font-semibold">${t.status}</span></div>
+            // Render Riwayat Transaksi
+            const trxList = document.getElementById('wallet-transactions-list');
+            const trxs = user.transactions || [];
+            trxList.innerHTML = trxs.length ? trxs.map(t => `
+                <div class="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/70 flex items-center justify-between gap-3 text-xs">
+                    <div class="min-w-0">
+                        <div class="font-bold truncate">${escapeHtml(t.label)}</div>
+                        <div class="text-[11px] text-slate-400">${escapeHtml(t.date)} • <span class="font-semibold ${t.status === 'Sukses' ? 'text-emerald-500' : 'text-amber-500'}">${escapeHtml(t.status)}</span></div>
                     </div>
-                    <span class="font-black ${t.amount >= 0 ? 'text-emerald-500' : 'text-rose-500'}">${t.amount >= 0 ? '+' : ''}${formatRupiah(t.amount)}</span>
+                    <span class="font-black shrink-0 ${t.amount >= 0 ? 'text-emerald-500' : 'text-rose-500'}">${t.amount >= 0 ? '+' : ''}${formatRupiah(t.amount)}</span>
                 </div>
-            `).join('') : `<div class="text-xs text-slate-400 py-4">Belum ada riwayat transaksi.</div>`;
+            `).join('') : `<div class="text-xs text-slate-400 py-4 text-center">Belum ada riwayat transaksi.</div>`;
         }
 
-        function calculateQrisCommission(amount, method) {
+        function renderWalletAvailableCoupons(user) {
+            const box = document.getElementById('wallet-available-coupons-box');
+            if (!box) return;
+            const activeCoupons = (appState.coupons || []).filter(c => c.active && (c.usedCount || 0) < Number(c.quota || 0));
+            if (activeCoupons.length === 0) {
+                box.innerHTML = '';
+                return;
+            }
+            const userClaimedList = user && Array.isArray(user.claimedCoupons) ? user.claimedCoupons : [];
+            box.innerHTML = `
+                <div class="text-[11px] font-bold text-indigo-200 flex items-center justify-between">
+                    <span><i class="fa-solid fa-tags mr-1 text-amber-300"></i>Kupon Promo Tersedia (${activeCoupons.length}):</span>
+                    <span class="text-[10px] text-indigo-300">Klik Salin untuk memakai</span>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    ${activeCoupons.map(c => {
+                        const benefit = c.type === 'topup_bonus_pct'
+                            ? `Bonus Top Up +${c.value}%`
+                            : c.type === 'topup_bonus_flat'
+                                ? `Bonus Top Up +${formatRupiah(c.value)}`
+                                : `Saldo Gratis ${formatRupiah(c.value)}`;
+                        const safeCode = escapeHtml(c.code);
+                        const isClaimedByUser = userClaimedList.includes(c.code) || (Array.isArray(c.usedBy) && user && c.usedBy.includes(user.username));
+                        return `
+                        <div class="p-2.5 rounded-2xl bg-white/10 border ${isClaimedByUser ? 'border-emerald-400/30 opacity-75' : 'border-white/15'} flex items-center justify-between gap-2">
+                            <div class="min-w-0">
+                                <div class="flex items-center gap-1.5">
+                                    <span class="font-black text-xs text-amber-300 tracking-wider">${safeCode}</span>
+                                    <span class="px-1.5 py-0.5 rounded-md bg-emerald-500/25 text-emerald-200 text-[10px] font-bold">${escapeHtml(benefit)}</span>
+                                </div>
+                                <div class="text-[10px] text-indigo-200 truncate mt-0.5">${escapeHtml(c.desc || 'Promo aktif')} • Sisa ${Math.max(0, Number(c.quota || 0) - (c.usedCount || 0))}</div>
+                            </div>
+                            ${isClaimedByUser
+                                ? `<span class="px-2.5 py-1.5 rounded-xl bg-emerald-500/20 text-emerald-300 text-[10px] font-extrabold shrink-0"><i class="fa-solid fa-check mr-1"></i>Diklaim</span>`
+                                : `<button type="button" onclick="copyCouponToRedeem('${safeCode}')" class="px-2.5 py-1.5 rounded-xl bg-white/15 hover:bg-amber-500 hover:text-slate-950 text-white text-[11px] font-extrabold shrink-0 transition-all" title="Salin Kode Kupon"><i class="fa-regular fa-copy mr-1"></i>Salin</button>`
+                            }
+                        </div>`;
+                    }).join('')}
+                </div>
+            `;
+        }
+
+        function copyCouponToRedeem(code) {
+            const cleanCode = String(code || '').trim().toUpperCase();
+            if (!cleanCode) return;
+            copyTextFallback(cleanCode, `Kode kupon "${cleanCode}" disalin!`);
+            const directInput = document.getElementById('wallet-direct-coupon-input');
+            if (directInput) {
+                directInput.value = cleanCode;
+                directInput.focus();
+            }
+        }
+
+        function redeemDirectCoupon(e) {
+            e.preventDefault();
+            const user = getActiveUser();
+            if (!user) {
+                openAuthModal('login');
+                return;
+            }
+            user.claimedCoupons = Array.isArray(user.claimedCoupons) ? user.claimedCoupons : [];
+            if (user.claimedCouponCode && !user.claimedCoupons.includes(user.claimedCouponCode)) {
+                user.claimedCoupons.push(user.claimedCouponCode);
+            }
+
+            const input = document.getElementById('wallet-direct-coupon-input');
+            const code = (input.value || '').trim().toUpperCase();
+            if (!code) {
+                showToast('Masukkan kode kupon terlebih dahulu!', 'error');
+                return;
+            }
+            const coupon = (appState.coupons || []).find(c => (c.code || '').toUpperCase() === code);
+            if (!coupon) {
+                showToast('Kode kupon tidak ditemukan!', 'error');
+                return;
+            }
+            if (!coupon.active) {
+                showToast('Kupon ini sedang tidak aktif.', 'error');
+                return;
+            }
+            if (user.claimedCoupons.includes(coupon.code) || (Array.isArray(coupon.usedBy) && coupon.usedBy.includes(user.username))) {
+                input.value = '';
+                showToast(`Anda sudah pernah mengklaim kupon "${coupon.code}". Silakan coba kode kupon lainnya!`, 'error');
+                return;
+            }
+            if ((coupon.usedCount || 0) >= Number(coupon.quota || 0)) {
+                showToast('Kuota pemakaian kupon ini sudah habis.', 'error');
+                return;
+            }
+            if (coupon.type !== 'redeem_balance') {
+                // Kupon bonus Top Up -> buka checkout dengan minimal Top Up yang sesuai dan langsung terapkan kupon
+                const targetAmount = Math.max(10000, Number(coupon.minTopup || 10000));
+                input.value = '';
+                openTopupCheckout(targetAmount);
+                document.getElementById('topup-coupon-input').value = coupon.code;
+                applyTopupCoupon();
+                return;
+            }
+
+            const reward = Number(coupon.value || 0);
+            user.balance = (user.balance || 0) + reward;
+            user.claimedCoupons.push(coupon.code);
+            input.value = '';
+            coupon.usedCount = (coupon.usedCount || 0) + 1;
+            coupon.usedBy = Array.isArray(coupon.usedBy) ? coupon.usedBy : [];
+            if (!coupon.usedBy.includes(user.username)) coupon.usedBy.push(user.username);
+            user.transactions = user.transactions || [];
+            user.transactions.unshift({
+                id: 'CPN-' + Date.now(),
+                type: 'topup',
+                label: `Redeem Kupon (${coupon.code})`,
+                amount: reward,
+                status: 'Sukses',
+                date: new Date().toLocaleString('id-ID')
+            });
+            saveState();
+            updateHeaderUI();
+            renderWalletView();
+            showToast(`🎉 Kupon ${coupon.code} berhasil diredeem! Saldo +${formatRupiah(reward)} masuk ke dompet.`, 'success');
+        }
+
+        function calculateQrisCommission(amount, method, coupon = appliedTopupCoupon) {
             const fees = (appState.qris && appState.qris.fees) || { qris: 0.7, shopeepay: 1.5, dana: 1.0 };
             const rate = Number(fees[method] || 0);
             const bearer = (appState.qris && appState.qris.feeBearer) || 'buyer';
             const feeAmount = Math.round((Number(amount) * rate) / 100);
-            if (bearer === 'buyer') {
-                return { rate, bearer, feeAmount, totalPay: Number(amount) + feeAmount, netCredit: Number(amount) };
+
+            let couponBonus = 0;
+            if (coupon && coupon.active) {
+                if (coupon.type === 'topup_bonus_pct') {
+                    couponBonus = Math.round((Number(amount) * Number(coupon.value || 0)) / 100);
+                } else if (coupon.type === 'topup_bonus_flat') {
+                    couponBonus = Number(coupon.value || 0);
+                }
             }
-            return { rate, bearer, feeAmount, totalPay: Number(amount), netCredit: Math.max(0, Number(amount) - feeAmount) };
+
+            if (bearer === 'buyer') {
+                return { rate, bearer, feeAmount, couponBonus, totalPay: Number(amount) + feeAmount, netCredit: Number(amount) + couponBonus };
+            }
+            return { rate, bearer, feeAmount, couponBonus, totalPay: Number(amount), netCredit: Math.max(0, Number(amount) - feeAmount) + couponBonus };
         }
 
         function updateTopupCommissionUI() {
-            const calc = calculateQrisCommission(pendingTopupAmount, selectedTopupMethod);
+            const calc = calculateQrisCommission(pendingTopupAmount, selectedTopupMethod, appliedTopupCoupon);
             document.getElementById('topup-modal-amount').textContent = formatRupiah(pendingTopupAmount);
             document.getElementById('topup-fee-label').textContent = `Komisi / MDR (${calc.rate}%)`;
             document.getElementById('topup-fee-amount').textContent = (calc.bearer === 'buyer' ? '+ ' : '- ') + formatRupiah(calc.feeAmount);
             document.getElementById('topup-total-pay').textContent = formatRupiah(calc.totalPay);
             document.getElementById('topup-net-credit-info').textContent = `Saldo diterima pemain: ${formatRupiah(calc.netCredit)}`;
+
+            const bonusRow = document.getElementById('topup-coupon-bonus-row');
+            if (appliedTopupCoupon && calc.couponBonus > 0) {
+                bonusRow.classList.remove('hidden');
+                document.getElementById('topup-coupon-bonus-label').textContent = `Bonus Kupon (${appliedTopupCoupon.code})`;
+                document.getElementById('topup-coupon-bonus-amount').textContent = `+ ${formatRupiah(calc.couponBonus)}`;
+            } else {
+                bonusRow.classList.add('hidden');
+            }
+        }
+
+        function applyTopupCoupon() {
+            const user = getActiveUser();
+            if (!user) return;
+            const input = document.getElementById('topup-coupon-input');
+            const statusEl = document.getElementById('topup-coupon-status');
+            const code = (input.value || '').trim().toUpperCase();
+            if (!code) {
+                appliedTopupCoupon = null;
+                statusEl.classList.add('hidden');
+                updateTopupCommissionUI();
+                return;
+            }
+            const coupon = (appState.coupons || []).find(c => (c.code || '').toUpperCase() === code);
+            if (!coupon) {
+                appliedTopupCoupon = null;
+                statusEl.className = 'text-[11px] font-bold text-rose-500';
+                statusEl.textContent = '❌ Kode kupon tidak ditemukan.';
+                updateTopupCommissionUI();
+                return;
+            }
+            if (!coupon.active) {
+                appliedTopupCoupon = null;
+                statusEl.className = 'text-[11px] font-bold text-rose-500';
+                statusEl.textContent = '❌ Kupon ini sedang dinonaktifkan oleh Admin.';
+                updateTopupCommissionUI();
+                return;
+            }
+            if ((coupon.usedCount || 0) >= Number(coupon.quota || 0)) {
+                appliedTopupCoupon = null;
+                statusEl.className = 'text-[11px] font-bold text-rose-500';
+                statusEl.textContent = '❌ Kuota pemakaian kupon ini sudah habis.';
+                updateTopupCommissionUI();
+                return;
+            }
+            user.claimedCoupons = Array.isArray(user.claimedCoupons) ? user.claimedCoupons : [];
+            if (user.claimedCouponCode && !user.claimedCoupons.includes(user.claimedCouponCode)) {
+                user.claimedCoupons.push(user.claimedCouponCode);
+            }
+            if (user.claimedCoupons.includes(coupon.code) || (Array.isArray(coupon.usedBy) && coupon.usedBy.includes(user.username))) {
+                appliedTopupCoupon = null;
+                statusEl.className = 'text-[11px] font-bold text-rose-500';
+                statusEl.textContent = `❌ Anda sudah pernah mengklaim kupon "${coupon.code}". Gunakan kode kupon lain.`;
+                updateTopupCommissionUI();
+                return;
+            }
+
+            if (coupon.type === 'redeem_balance') {
+                const reward = Number(coupon.value || 0);
+                user.balance = (user.balance || 0) + reward;
+                user.claimedCoupons.push(coupon.code);
+                coupon.usedCount = (coupon.usedCount || 0) + 1;
+                coupon.usedBy = Array.isArray(coupon.usedBy) ? coupon.usedBy : [];
+                coupon.usedBy.push(user.username);
+                user.transactions = user.transactions || [];
+                user.transactions.unshift({
+                    id: 'CPN-' + Date.now(),
+                    type: 'topup',
+                    label: `Klaim Kupon Saldo (${coupon.code})`,
+                    amount: reward,
+                    status: 'Sukses',
+                    date: new Date().toLocaleString('id-ID')
+                });
+                saveState();
+                updateHeaderUI();
+                if (currentView === 'wallet') renderWalletView();
+                statusEl.className = 'text-[11px] font-bold text-emerald-500';
+                statusEl.textContent = `🎉 Kupon ${coupon.code} berhasil diklaim! Saldo +${formatRupiah(reward)} langsung masuk.`;
+                showToast(`Saldo gratis ${formatRupiah(reward)} dari kupon ${coupon.code} masuk!`, 'success');
+                return;
+            }
+
+            if (pendingTopupAmount < Number(coupon.minTopup || 0)) {
+                appliedTopupCoupon = null;
+                statusEl.className = 'text-[11px] font-bold text-amber-500';
+                statusEl.textContent = `⚠️ Minimal Top Up untuk kupon ini adalah ${formatRupiah(coupon.minTopup)}.`;
+                updateTopupCommissionUI();
+                return;
+            }
+
+            appliedTopupCoupon = coupon;
+            statusEl.className = 'text-[11px] font-bold text-emerald-500';
+            statusEl.textContent = `✅ Kupon ${coupon.code} diterapkan! (${coupon.desc || 'Bonus Top Up aktif'})`;
+            updateTopupCommissionUI();
+            showToast(`Kupon ${coupon.code} berhasil diterapkan!`, 'success');
         }
 
         function openTopupCheckout(amount) {
@@ -1901,6 +2406,11 @@ window.addEventListener('message',e=>{const m=e.data||{};if(m.type==='GZ_PURCHAS
                 return;
             }
             pendingTopupAmount = amount;
+            appliedTopupCoupon = null;
+            const cpnInput = document.getElementById('topup-coupon-input');
+            const cpnStatus = document.getElementById('topup-coupon-status');
+            if (cpnInput) cpnInput.value = '';
+            if (cpnStatus) cpnStatus.classList.add('hidden');
             document.getElementById('topup-merchant-label').textContent = appState.qris.merchant || 'QRIS GameZone ID';
             document.getElementById('topup-qris-img').src = appState.qris.imageUrl || 'https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=GameZoneID-QRIS';
             document.getElementById('topup-shopeepay-qris-img').src = appState.qris.shopeePayQrisUrl || 'https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=ShopeePay-Merchant-GameZoneID';
@@ -1976,7 +2486,18 @@ window.addEventListener('message',e=>{const m=e.data||{};if(m.type==='GZ_PURCHAS
             const user = getActiveUser();
             if (!user || !pendingTopupAmount) return;
             const methodLabel = selectedTopupMethod === 'shopeepay' ? 'ShopeePay' : selectedTopupMethod === 'dana' ? 'QRIS DANA' : 'QRIS';
-            const calc = calculateQrisCommission(pendingTopupAmount, selectedTopupMethod);
+            const calc = calculateQrisCommission(pendingTopupAmount, selectedTopupMethod, appliedTopupCoupon);
+            const usedCouponCode = appliedTopupCoupon ? appliedTopupCoupon.code : '';
+            if (appliedTopupCoupon) {
+                user.claimedCoupons = Array.isArray(user.claimedCoupons) ? user.claimedCoupons : [];
+                if (!user.claimedCoupons.includes(appliedTopupCoupon.code)) user.claimedCoupons.push(appliedTopupCoupon.code);
+                const cpn = (appState.coupons || []).find(c => c.id === appliedTopupCoupon.id);
+                if (cpn) {
+                    cpn.usedCount = (cpn.usedCount || 0) + 1;
+                    cpn.usedBy = Array.isArray(cpn.usedBy) ? cpn.usedBy : [];
+                    if (!cpn.usedBy.includes(user.username)) cpn.usedBy.push(user.username);
+                }
+            }
             appState.topupRequests.unshift({
                 id: 'TOP-' + Date.now(),
                 username: user.username,
@@ -1986,6 +2507,8 @@ window.addEventListener('message',e=>{const m=e.data||{};if(m.type==='GZ_PURCHAS
                 totalPay: calc.totalPay,
                 feeAmount: calc.feeAmount,
                 feeRate: calc.rate,
+                couponCode: usedCouponCode,
+                couponBonus: calc.couponBonus,
                 status: 'pending',
                 date: new Date().toLocaleString('id-ID')
             });
@@ -1993,11 +2516,12 @@ window.addEventListener('message',e=>{const m=e.data||{};if(m.type==='GZ_PURCHAS
             user.transactions.unshift({
                 id: 'TRX-' + Date.now(),
                 type: 'topup',
-                label: `Top Up ${methodLabel} (Bayar ${formatRupiah(calc.totalPay)} • Komisi ${calc.rate}%)`,
+                label: `Top Up ${methodLabel}${usedCouponCode ? ` + Kupon ${usedCouponCode}` : ''} (Bayar ${formatRupiah(calc.totalPay)})`,
                 amount: calc.netCredit,
                 status: 'Pending',
                 date: new Date().toLocaleString('id-ID')
             });
+            appliedTopupCoupon = null;
             saveState();
             closeTopupModal();
             renderWalletView();
@@ -2007,21 +2531,35 @@ window.addEventListener('message',e=>{const m=e.data||{};if(m.type==='GZ_PURCHAS
         function processPaymentGatewayInstant() {
             const user = getActiveUser();
             if (!user || !pendingTopupAmount) return;
-            user.balance = (user.balance || 0) + pendingTopupAmount;
+            const calc = calculateQrisCommission(pendingTopupAmount, selectedTopupMethod, appliedTopupCoupon);
+            const totalCredit = pendingTopupAmount + (calc.couponBonus || 0);
+            const usedCouponCode = appliedTopupCoupon ? appliedTopupCoupon.code : '';
+            if (appliedTopupCoupon) {
+                user.claimedCoupons = Array.isArray(user.claimedCoupons) ? user.claimedCoupons : [];
+                if (!user.claimedCoupons.includes(appliedTopupCoupon.code)) user.claimedCoupons.push(appliedTopupCoupon.code);
+                const cpn = (appState.coupons || []).find(c => c.id === appliedTopupCoupon.id);
+                if (cpn) {
+                    cpn.usedCount = (cpn.usedCount || 0) + 1;
+                    cpn.usedBy = Array.isArray(cpn.usedBy) ? cpn.usedBy : [];
+                    if (!cpn.usedBy.includes(user.username)) cpn.usedBy.push(user.username);
+                }
+            }
+            user.balance = (user.balance || 0) + totalCredit;
             user.transactions = user.transactions || [];
             user.transactions.unshift({
                 id: 'PG-' + Date.now(),
                 type: 'topup',
-                label: `Top Up Otomatis (${(appState.paymentGateway.provider || 'Gateway').toUpperCase()})`,
-                amount: pendingTopupAmount,
+                label: `Top Up Otomatis (${(appState.paymentGateway.provider || 'Gateway').toUpperCase()})${usedCouponCode ? ` + Kupon ${usedCouponCode}` : ''}`,
+                amount: totalCredit,
                 status: 'Sukses',
                 date: new Date().toLocaleString('id-ID')
             });
+            appliedTopupCoupon = null;
             saveState();
             closeTopupModal();
             updateHeaderUI();
             renderWalletView();
-            showToast(`Pembayaran Gateway berhasil! Saldo bertambah ${formatRupiah(pendingTopupAmount)}.`, 'success');
+            showToast(`Pembayaran Gateway berhasil! Saldo bertambah ${formatRupiah(totalCredit)}.`, 'success');
         }
 
         // ==================== AUTH, EDIT PROFIL & LUPA PASSWORD OTP ====================
@@ -2057,6 +2595,8 @@ window.addEventListener('message',e=>{const m=e.data||{};if(m.type==='GZ_PURCHAS
             }
             appState.currentUser = uname;
             user.lastSeen = Date.now();
+            const directInput = document.getElementById('wallet-direct-coupon-input');
+            if (directInput) directInput.value = '';
             saveState();
             closeAuthModal();
             updateHeaderUI();
@@ -2095,9 +2635,12 @@ window.addEventListener('message',e=>{const m=e.data||{};if(m.type==='GZ_PURCHAS
                 ]
             };
             appState.currentUser = uname;
+            const directInput = document.getElementById('wallet-direct-coupon-input');
+            if (directInput) directInput.value = '';
             saveState();
             closeAuthModal();
             updateHeaderUI();
+            if (currentView === 'wallet') renderWalletView();
             showToast(`Akun berhasil dibuat! Bonus saldo Rp 25.000 ditambahkan.`, 'success');
         }
 
@@ -2108,6 +2651,8 @@ window.addEventListener('message',e=>{const m=e.data||{};if(m.type==='GZ_PURCHAS
                 user.currentlyPlaying = null;
             }
             appState.currentUser = null;
+            const directInput = document.getElementById('wallet-direct-coupon-input');
+            if (directInput) directInput.value = '';
             saveState();
             updateHeaderUI();
             if (currentView === 'admin') navigateTo('catalog');
@@ -2375,7 +2920,7 @@ window.addEventListener('message',e=>{const m=e.data||{};if(m.type==='GZ_PURCHAS
         let detectedItemsBuffer = [];
 
         function switchAdminTab(tab) {
-            ['games', 'topup', 'gateway', 'sdk', 'branding', 'cloud'].forEach(t => {
+            ['games', 'topup', 'coupons', 'gateway', 'sdk', 'branding', 'cloud'].forEach(t => {
                 document.getElementById('admin-panel-' + t).classList.toggle('hidden', t !== tab);
                 const btn = document.getElementById('admin-tab-btn-' + t);
                 btn.className = t === tab
@@ -2383,6 +2928,160 @@ window.addEventListener('message',e=>{const m=e.data||{};if(m.type==='GZ_PURCHAS
                     : 'admin-tab-btn px-4 py-2 rounded-2xl text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300';
             });
             renderAdminPanel();
+        }
+
+        // ==================== KELOLA KUPON ADMIN ====================
+        function saveAdminCoupon(e) {
+            e.preventDefault();
+            if (!isAdminUser()) return;
+            const editId = document.getElementById('admin-coupon-edit-id').value.trim();
+            const code = document.getElementById('admin-coupon-code').value.trim().toUpperCase().replace(/\s+/g, '');
+            const type = document.getElementById('admin-coupon-type').value;
+            const value = Math.max(1, Number(document.getElementById('admin-coupon-value').value || 0));
+            const quota = Math.max(1, Number(document.getElementById('admin-coupon-quota').value || 1));
+            const minTopup = Math.max(0, Number(document.getElementById('admin-coupon-min-topup').value || 0));
+            const desc = document.getElementById('admin-coupon-desc').value.trim();
+            const active = document.getElementById('admin-coupon-active').checked;
+
+            if (!code) {
+                showToast('Masukkan kode kupon yang valid!', 'error');
+                return;
+            }
+
+            appState.coupons = Array.isArray(appState.coupons) ? appState.coupons : [];
+            const duplicate = appState.coupons.find(c => (c.code || '').toUpperCase() === code && String(c.id) !== String(editId));
+            if (duplicate) {
+                showToast(`Kode kupon "${code}" sudah digunakan!`, 'error');
+                return;
+            }
+
+            if (editId) {
+                const target = appState.coupons.find(c => String(c.id) === String(editId));
+                if (target) {
+                    target.code = code;
+                    target.type = type;
+                    target.value = value;
+                    target.quota = quota;
+                    target.minTopup = minTopup;
+                    target.desc = desc;
+                    target.active = active;
+                    showToast(`Kupon "${code}" berhasil diperbarui!`, 'success');
+                }
+            } else {
+                appState.coupons.unshift({
+                    id: 'cpn_' + Date.now(),
+                    code,
+                    type,
+                    value,
+                    quota,
+                    minTopup,
+                    usedCount: 0,
+                    usedBy: [],
+                    desc: desc || `Promo spesial kode ${code}`,
+                    active
+                });
+                showToast(`Kupon baru "${code}" berhasil dibuat!`, 'success');
+            }
+
+            resetAdminCouponForm();
+            saveState();
+            renderAdminCouponsList();
+        }
+
+        function editAdminCoupon(couponId) {
+            const cpn = (appState.coupons || []).find(c => String(c.id) === String(couponId));
+            if (!cpn) return;
+            document.getElementById('admin-coupon-edit-id').value = cpn.id;
+            document.getElementById('admin-coupon-code').value = cpn.code || '';
+            document.getElementById('admin-coupon-type').value = cpn.type || 'topup_bonus_pct';
+            document.getElementById('admin-coupon-value').value = cpn.value || 10;
+            document.getElementById('admin-coupon-quota').value = cpn.quota || 50;
+            document.getElementById('admin-coupon-min-topup').value = cpn.minTopup || 0;
+            document.getElementById('admin-coupon-desc').value = cpn.desc || '';
+            document.getElementById('admin-coupon-active').checked = !!cpn.active;
+
+            document.getElementById('admin-coupon-form-title').innerHTML = `<i class="fa-solid fa-pen-to-square text-indigo-500"></i> Edit Kupon: ${escapeHtml(cpn.code)}`;
+            document.getElementById('admin-coupon-submit-btn').innerHTML = `<i class="fa-solid fa-check mr-1.5"></i>Perbarui Kupon`;
+            document.getElementById('admin-coupon-cancel-edit').classList.remove('hidden');
+        }
+
+        function resetAdminCouponForm() {
+            document.getElementById('admin-coupon-edit-id').value = '';
+            document.getElementById('admin-coupon-code').value = '';
+            document.getElementById('admin-coupon-type').value = 'topup_bonus_pct';
+            document.getElementById('admin-coupon-value').value = '';
+            document.getElementById('admin-coupon-quota').value = '50';
+            document.getElementById('admin-coupon-min-topup').value = '0';
+            document.getElementById('admin-coupon-desc').value = '';
+            document.getElementById('admin-coupon-active').checked = true;
+
+            document.getElementById('admin-coupon-form-title').innerHTML = `<i class="fa-solid fa-ticket text-amber-500"></i> Buat Kupon Baru`;
+            document.getElementById('admin-coupon-submit-btn').innerHTML = `<i class="fa-solid fa-save mr-1.5"></i>Simpan Kupon`;
+            document.getElementById('admin-coupon-cancel-edit').classList.add('hidden');
+        }
+
+        function toggleAdminCouponStatus(couponId) {
+            if (!isAdminUser()) return;
+            const cpn = (appState.coupons || []).find(c => String(c.id) === String(couponId));
+            if (!cpn) return;
+            cpn.active = !cpn.active;
+            saveState();
+            renderAdminCouponsList();
+            if (currentView === 'wallet') renderWalletView();
+            showToast(`Kupon "${cpn.code}" ${cpn.active ? 'diaktifkan' : 'dinonaktifkan'}.`, 'info');
+        }
+
+        function deleteAdminCoupon(couponId) {
+            if (!isAdminUser()) return;
+            appState.coupons = (appState.coupons || []).filter(c => String(c.id) !== String(couponId));
+            saveState();
+            renderAdminCouponsList();
+            if (currentView === 'wallet') renderWalletView();
+            showToast('Kupon berhasil dihapus.', 'info');
+        }
+
+        function renderAdminCouponsList() {
+            const listEl = document.getElementById('admin-coupons-list');
+            const countEl = document.getElementById('admin-coupons-count');
+            if (!listEl) return;
+            const coupons = appState.coupons || [];
+            if (countEl) countEl.textContent = `${coupons.length} Kupon`;
+
+            if (coupons.length === 0) {
+                listEl.innerHTML = `<div class="text-xs text-slate-400 text-center py-8">Belum ada kupon promo. Buat kupon pertama Anda di formulir sebelah kiri.</div>`;
+                return;
+            }
+
+            listEl.innerHTML = coupons.map(c => {
+                const typeBadge = c.type === 'topup_bonus_pct'
+                    ? `Bonus Top Up +${c.value}%`
+                    : c.type === 'topup_bonus_flat'
+                        ? `Bonus Top Up +${formatRupiah(c.value)}`
+                        : `Saldo Gratis ${formatRupiah(c.value)}`;
+                return `
+                <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/70 border ${c.active ? 'border-indigo-500/20' : 'border-slate-300/40 dark:border-slate-700 opacity-70'} flex flex-wrap items-center justify-between gap-3">
+                    <div class="space-y-1 min-w-0">
+                        <div class="flex flex-wrap items-center gap-2">
+                            <span class="px-2.5 py-1 rounded-xl bg-amber-500/15 text-amber-600 dark:text-amber-400 font-black text-xs tracking-wider">${escapeHtml(c.code)}</span>
+                            <span class="px-2 py-0.5 rounded-lg bg-indigo-500/15 text-indigo-500 text-[11px] font-extrabold">${escapeHtml(typeBadge)}</span>
+                            <span class="px-2 py-0.5 rounded-lg ${c.active ? 'bg-emerald-500/15 text-emerald-500' : 'bg-rose-500/15 text-rose-500'} text-[10px] font-extrabold">${c.active ? 'Aktif' : 'Nonaktif'}</span>
+                        </div>
+                        <p class="text-xs text-slate-600 dark:text-slate-300">${escapeHtml(c.desc || '-')}</p>
+                        <div class="text-[11px] text-slate-400">Terpakai: <b>${c.usedCount || 0} / ${c.quota || 0}</b> • Min. Top Up: <b>${formatRupiah(c.minTopup || 0)}</b></div>
+                    </div>
+                    <div class="flex items-center gap-1.5 shrink-0">
+                        <button type="button" onclick="editAdminCoupon('${escapeHtml(c.id)}')" class="px-3 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold">
+                            <i class="fa-solid fa-pen mr-1"></i>Edit
+                        </button>
+                        <button type="button" onclick="toggleAdminCouponStatus('${escapeHtml(c.id)}')" class="px-3 py-1.5 rounded-xl bg-slate-200 dark:bg-slate-700 text-xs font-bold">
+                            ${c.active ? 'Nonaktifkan' : 'Aktifkan'}
+                        </button>
+                        <button type="button" onclick="deleteAdminCoupon('${escapeHtml(c.id)}')" class="px-2.5 py-1.5 rounded-xl bg-rose-500/15 text-rose-500 text-xs font-bold hover:bg-rose-500/25">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </div>
+                </div>`;
+            }).join('');
         }
 
         function handleBrandingFileUpload(event, stateKey, inputId, previewId, maxDim = 240) {
@@ -2416,6 +3115,8 @@ window.addEventListener('message',e=>{const m=e.data||{};if(m.type==='GZ_PURCHAS
 
         function saveBrandingConfig() {
             if (!isAdminUser()) return;
+            const manualVer = document.getElementById('admin-portal-version').value.trim();
+            appState.portalVersion = manualVer ? normalizePortalVersionTag(manualVer) : incrementPortalPatchVersion(appState.portalVersion || 'GZI Versi 1.0.0');
             appState.branding = {
                 siteName: document.getElementById('admin-brand-name').value.trim() || 'GameZone ID',
                 tagline: document.getElementById('admin-brand-tagline').value.trim() || 'Portal & Wallet',
@@ -2424,7 +3125,7 @@ window.addEventListener('message',e=>{const m=e.data||{};if(m.type==='GZ_PURCHAS
             };
             applyBranding();
             saveState();
-            showToast('Logo, nama portal & favicon berhasil disimpan dan diterapkan!', 'success');
+            showToast(`Logo, favicon & versi portal (${appState.portalVersion}) berhasil diterapkan!`, 'success');
         }
 
         function resetBrandingDefault() {
@@ -2466,6 +3167,7 @@ window.addEventListener('message',e=>{const m=e.data||{};if(m.type==='GZ_PURCHAS
             const category = document.getElementById('admin-game-category').value;
             const sourceType = document.getElementById('admin-game-type').value;
             const thumbnail = document.getElementById('admin-game-thumb').value.trim();
+            const manualVersion = document.getElementById('admin-game-version').value.trim();
             const rawUrl = document.getElementById('admin-game-url').value.trim();
             const sourceCode = document.getElementById('admin-game-html').value.trim();
 
@@ -2481,6 +3183,9 @@ window.addEventListener('message',e=>{const m=e.data||{};if(m.type==='GZ_PURCHAS
             }
 
             const sourceUrl = sourceType === 'url' ? normalizeGameUrl(rawUrl) : '';
+            const detectedVersion = manualVersion
+                ? normalizeVersionTag(manualVersion)
+                : detectGameVersionFromSource(sourceType, rawUrl, sourceCode);
 
             if (sourceType === 'html' && detectedItemsBuffer.length === 0) {
                 scanHtmlShopItems();
@@ -2490,6 +3195,7 @@ window.addEventListener('message',e=>{const m=e.data||{};if(m.type==='GZ_PURCHAS
                 id: 'game_' + Date.now(),
                 title,
                 category,
+                version: detectedVersion,
                 sourceType,
                 sourceUrl,
                 sourceCode: sourceType === 'html' ? sourceCode : '',
@@ -2502,14 +3208,16 @@ window.addEventListener('message',e=>{const m=e.data||{};if(m.type==='GZ_PURCHAS
             };
 
             appState.games.unshift(newGame);
+            bumpPortalVersion(false);
             detectedItemsBuffer = [];
             e.target.reset();
             toggleAdminSourceField('url');
+            previewDetectedGameVersion();
             document.getElementById('scanned-items-preview').classList.add('hidden');
             saveState();
             renderAdminPanel();
             renderGamesGrid();
-            showToast(`Game "${title}" berhasil dipublikasikan!`, 'success');
+            showToast(`Game "${title}" (${detectedVersion}) dipublikasikan! Portal otomatis naik ke ${appState.portalVersion}.`, 'success');
         }
 
         function adminDeleteGame(gameId) {
@@ -2583,10 +3291,13 @@ window.addEventListener('message',e=>{const m=e.data||{};if(m.type==='GZ_PURCHAS
                 if (name && price > 0) updatedItems.push({ id, name, price });
             });
             game.shopItems = updatedItems;
+            game.version = incrementPatchVersion(game.version || 'v1.0.0');
+            bumpPortalVersion(false);
             saveState();
             closeEditShopModal();
             renderAdminPanel();
-            showToast('Daftar & harga item toko game berhasil diperbarui!', 'success');
+            renderGamesGrid();
+            showToast(`Toko game diperbarui! Versi game otomatis naik ke ${game.version}.`, 'success');
         }
 
         function updateQrisPreview(previewId, src) {
@@ -2699,14 +3410,20 @@ window.addEventListener('message',e=>{const m=e.data||{};if(m.type==='GZ_PURCHAS
             gamesList.innerHTML = appState.games.map(g => `
                 <div class="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/70 flex flex-wrap items-center justify-between gap-3">
                     <div>
-                        <div class="font-extrabold text-sm">${g.title}</div>
-                        <div class="text-[11px] text-slate-400">${g.category} • ${(g.shopItems || []).length} Item Toko • ${g.plays || 0}x dimainkan</div>
+                        <div class="font-extrabold text-sm flex items-center gap-2">
+                            <span>${escapeHtml(g.title)}</span>
+                            <span class="px-2 py-0.5 rounded-md bg-indigo-500/15 text-indigo-500 text-[10px] font-extrabold">${escapeHtml(normalizeVersionTag(g.version || 'v1.0.0'))}</span>
+                        </div>
+                        <div class="text-[11px] text-slate-400">${escapeHtml(g.category)} • ${(g.shopItems || []).length} Item Toko • ${g.plays || 0}x dimainkan</div>
                     </div>
                     <div class="flex items-center gap-2">
-                        <button onclick="openEditShopModal('${g.id}')" class="px-3.5 py-2 rounded-xl bg-amber-500/15 text-amber-600 dark:text-amber-400 text-xs font-extrabold hover:bg-amber-500/25">
+                        <button onclick="bumpGameVersion('${escapeHtml(g.id)}')" title="Naikkan Versi Game Otomatis" class="px-3 py-2 rounded-xl bg-indigo-500/15 text-indigo-500 text-xs font-extrabold hover:bg-indigo-500/25">
+                            <i class="fa-solid fa-arrow-up-right-dots mr-1"></i>+Versi
+                        </button>
+                        <button onclick="openEditShopModal('${escapeHtml(g.id)}')" class="px-3.5 py-2 rounded-xl bg-amber-500/15 text-amber-600 dark:text-amber-400 text-xs font-extrabold hover:bg-amber-500/25">
                             <i class="fa-solid fa-store mr-1"></i>Edit Toko
                         </button>
-                        <button onclick="adminDeleteGame('${g.id}')" class="px-3 py-2 rounded-xl bg-rose-500/15 text-rose-500 text-xs font-bold hover:bg-rose-500/25">
+                        <button onclick="adminDeleteGame('${escapeHtml(g.id)}')" class="px-3 py-2 rounded-xl bg-rose-500/15 text-rose-500 text-xs font-bold hover:bg-rose-500/25">
                             <i class="fa-solid fa-trash"></i>
                         </button>
                     </div>
@@ -2735,12 +3452,14 @@ window.addEventListener('message',e=>{const m=e.data||{};if(m.type==='GZ_PURCHAS
             reqBox.innerHTML = appState.topupRequests.length ? appState.topupRequests.map(r => `
                 <div class="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/70 flex items-center justify-between gap-2 text-xs">
                     <div>
-                        <div class="font-bold">${r.name} (@${r.username}) <span class="px-2 py-0.5 rounded-md text-[10px] font-extrabold ${r.method === 'ShopeePay' ? 'bg-orange-500/15 text-orange-500' : r.method === 'QRIS DANA' ? 'bg-sky-500/15 text-sky-500' : 'bg-indigo-500/15 text-indigo-500'}">${r.method || 'QRIS'}</span></div>
+                        <div class="font-bold">${r.name} (@${r.username}) <span class="px-2 py-0.5 rounded-md text-[10px] font-extrabold ${r.method === 'ShopeePay' ? 'bg-orange-500/15 text-orange-500' : r.method === 'QRIS DANA' ? 'bg-sky-500/15 text-sky-500' : 'bg-indigo-500/15 text-indigo-500'}">${r.method || 'QRIS'}</span> ${r.couponCode ? `<span class="px-2 py-0.5 rounded-md bg-amber-500/15 text-amber-500 text-[10px] font-extrabold">🎟️ ${escapeHtml(r.couponCode)}</span>` : ''}</div>
                         <div class="text-emerald-500 font-extrabold">Saldo: ${formatRupiah(r.amount)} ${r.totalPay ? `<span class="text-slate-400 font-normal">(Bayar ${formatRupiah(r.totalPay)} • Komisi ${r.feeRate || 0}%)</span>` : ''} • <span class="text-slate-400 font-normal">${r.status}</span></div>
                     </div>
                     ${r.status === 'pending' ? `<button onclick="approveTopupRequest('${r.id}')" class="px-3.5 py-1.5 rounded-xl bg-emerald-600 text-white font-bold">Setujui</button>` : `<span class="text-emerald-500 font-bold">Selesai</span>`}
                 </div>
             `).join('') : `<div class="text-xs text-slate-400 py-4">Belum ada antrean Top Up.</div>`;
+
+            renderAdminCouponsList();
 
             // Payment Gateway
             const pg = appState.paymentGateway || {};
@@ -2754,6 +3473,8 @@ window.addEventListener('message',e=>{const m=e.data||{};if(m.type==='GZ_PURCHAS
             const br = appState.branding || DEFAULT_STATE.branding;
             document.getElementById('admin-brand-name').value = br.siteName || 'GameZone ID';
             document.getElementById('admin-brand-tagline').value = br.tagline || 'Portal & Wallet';
+            const pVerInput = document.getElementById('admin-portal-version');
+            if (pVerInput) pVerInput.value = normalizePortalVersionTag(appState.portalVersion || 'GZI Versi 1.0.0');
             document.getElementById('admin-brand-logo-url').value = br.logoUrl || '';
             document.getElementById('admin-brand-favicon-url').value = br.faviconUrl || '';
             updateQrisPreview('preview-brand-logo', br.logoUrl || 'https://placehold.co/120x120/4f46e5/ffffff?text=GZ');
@@ -2881,6 +3602,8 @@ function doPost(e) {
                         paymentGateway: { ...DEFAULT_STATE.paymentGateway, ...(appState.paymentGateway || {}), ...(data.paymentGateway || {}) },
                         users: (data.users && Object.keys(data.users).length) ? data.users : appState.users,
                         games: (Array.isArray(data.games) && data.games.length) ? data.games : appState.games,
+                        coupons: Array.isArray(data.coupons) ? data.coupons : appState.coupons,
+                        portalVersion: data.portalVersion || appState.portalVersion,
                         currentUser: activeSession
                     };
                     saveState(false);
@@ -2939,7 +3662,7 @@ function doPost(e) {
             navigateTo, openCatalogPreset, filterCategory, handleSearch, resetCatalogFilters, toggleLikeGame,
             toggleSidebarPin, openMobileSidebar, closeMobileSidebar, toggleThemeMode,
             launchGame, closeGamePlayer, togglePlayerDrawer, togglePlayerFullscreen,
-            purchaseGameItem, openTopupCheckout, switchTopupMethod, copyShopeePayNumber,
+            purchaseGameItem, openTopupCheckout, switchTopupMethod, copyCouponToRedeem, redeemDirectCoupon, applyTopupCoupon, copyShopeePayNumber,
             copyDanaNumber, closeTopupModal, submitManualQrisTopup,
             processPaymentGatewayInstant, openAuthModal, closeAuthModal, switchAuthMode,
             handleLoginSubmit, handleRegisterSubmit, logoutUser, sendPasswordOtp,
@@ -2950,8 +3673,10 @@ function doPost(e) {
             scanHtmlShopItems, adminAddGame, adminDeleteGame, openEditShopModal,
             closeEditShopModal, addShopItemRow, saveEditedShopItems, updateQrisPreview,
             handleQrisFileUpload, saveAdminQris, approveTopupRequest,
+            saveAdminCoupon, editAdminCoupon, resetAdminCouponForm, toggleAdminCouponStatus, deleteAdminCoupon,
             savePaymentGatewayConfig, handleBrandingFileUpload, saveBrandingConfig,
-            resetBrandingDefault, copySdkSnippet, copyGasTemplate, saveAppScriptUrl,
+            resetBrandingDefault, previewDetectedGameVersion, bumpPortalVersion, bumpGameVersion,
+            copySdkSnippet, copyGasTemplate, saveAppScriptUrl,
             syncWithCloud, pullFromCloud
         });
 
