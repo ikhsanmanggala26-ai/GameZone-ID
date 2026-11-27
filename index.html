@@ -114,7 +114,7 @@
                 </nav>
             </div>
 
-            <!-- Footer Sidebar: Mode Tema & Profil Cepat -->
+            <!-- Footer Sidebar: Mode Tema -->
             <div class="p-3.5 border-t border-slate-200/80 dark:border-slate-800 space-y-2">
                 <button onclick="toggleThemeMode()" class="w-full flex items-center gap-3.5 px-3 py-2.5 rounded-2xl text-sm font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all">
                     <i id="theme-toggle-icon" class="fa-solid fa-sun w-5 text-center text-amber-400 shrink-0"></i>
@@ -141,14 +141,11 @@
 
                     <!-- Kanan: Saldo & Akun -->
                     <div class="flex items-center gap-2.5 sm:gap-3">
-                        <!-- Pill Saldo -->
                         <button onclick="navigateTo('wallet')" class="flex items-center gap-2 px-3.5 py-2 rounded-2xl bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 font-bold text-xs sm:text-sm transition-all">
                             <i class="fa-solid fa-coins text-amber-500"></i>
                             <span id="header-balance">Rp 0</span>
                             <span class="hidden sm:inline-flex items-center justify-center w-5 h-5 rounded-full bg-emerald-500 text-white text-[10px]">+</span>
                         </button>
-
-                        <!-- Area Login / Profil User -->
                         <div id="header-auth-area"></div>
                     </div>
                 </div>
@@ -224,7 +221,6 @@
                     </div>
 
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                        <!-- Top Pemain -->
                         <div class="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/80 dark:border-slate-800 p-6 space-y-4 shadow-sm">
                             <h3 class="font-extrabold text-base flex items-center gap-2">
                                 <i class="fa-solid fa-crown text-amber-500"></i> Top Pemain Paling Aktif
@@ -232,7 +228,6 @@
                             <div id="leaderboard-players-list" class="space-y-3"></div>
                         </div>
 
-                        <!-- Top Game Terpopuler -->
                         <div class="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/80 dark:border-slate-800 p-6 space-y-4 shadow-sm">
                             <h3 class="font-extrabold text-base flex items-center gap-2">
                                 <i class="fa-solid fa-fire text-orange-500"></i> Game Paling Banyak Dimainkan
@@ -254,7 +249,6 @@
                     <div id="wallet-user-content" class="space-y-6">
                         <!-- Kartu Saldo & Profil -->
                         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                            <!-- Kartu Saldo Utama -->
                             <div class="lg:col-span-2 rounded-3xl bg-gradient-to-br from-slate-900 via-indigo-950 to-purple-950 text-white p-6 sm:p-8 border border-indigo-500/30 shadow-xl flex flex-col justify-between gap-6">
                                 <div class="flex items-start justify-between gap-4">
                                     <div>
@@ -269,7 +263,7 @@
 
                                 <!-- Pilihan Nominal Top Up Cepat -->
                                 <div class="space-y-3">
-                                    <div class="text-xs font-bold text-indigo-200">Top Up Saldo Instan (QRIS / Payment Gateway):</div>
+                                    <div class="text-xs font-bold text-indigo-200">Top Up Saldo Instan (QRIS Bank / ShopeePay / DANA):</div>
                                     <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
                                         <button onclick="openTopupCheckout(10000)" class="py-2.5 px-3 rounded-2xl bg-white/10 hover:bg-indigo-600 border border-white/15 font-extrabold text-xs transition-all">+ Rp 10.000</button>
                                         <button onclick="openTopupCheckout(25000)" class="py-2.5 px-3 rounded-2xl bg-white/10 hover:bg-indigo-600 border border-white/15 font-extrabold text-xs transition-all">+ Rp 25.000</button>
@@ -310,7 +304,6 @@
 
                         <!-- Baris Tengah: Catatan Prestasi Bermain & Inventori Item Permanen -->
                         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                            <!-- Catatan Prestasi (Achievements) -->
                             <div class="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/80 dark:border-slate-800 p-6 space-y-4 shadow-sm">
                                 <div class="flex items-center justify-between">
                                     <h3 class="font-extrabold text-base flex items-center gap-2">
@@ -321,7 +314,6 @@
                                 <div id="wallet-achievements-list" class="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-72 overflow-y-auto pr-1"></div>
                             </div>
 
-                            <!-- Database Item yang Dibeli (Permanen) -->
                             <div class="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/80 dark:border-slate-800 p-6 space-y-4 shadow-sm">
                                 <div class="flex items-center justify-between">
                                     <h3 class="font-extrabold text-base flex items-center gap-2">
@@ -346,7 +338,6 @@
                 <!-- ==================== VIEW 4: LIVE CHAT KOMUNITAS ==================== -->
                 <section id="view-chat" class="hidden space-y-4">
                     <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
-                        <!-- Kolom Chat Utama -->
                         <div class="lg:col-span-2 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/80 dark:border-slate-800 flex flex-col h-[540px] overflow-hidden shadow-sm">
                             <div class="p-4 border-b border-slate-200/80 dark:border-slate-800 flex items-center justify-between">
                                 <div class="flex items-center gap-2">
@@ -368,7 +359,6 @@
                             </form>
                         </div>
 
-                        <!-- Kolom Status Pemain Online & Sedang Dimainkan -->
                         <div class="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/80 dark:border-slate-800 p-5 flex flex-col h-[540px] shadow-sm">
                             <h3 class="font-extrabold text-sm flex items-center gap-2 pb-3 border-b border-slate-200/80 dark:border-slate-800">
                                 <i class="fa-solid fa-users text-emerald-500"></i> Status Pemain Real-Time
@@ -387,7 +377,7 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                             <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 space-y-1.5">
                                 <h4 class="font-extrabold text-indigo-500">1. Bagaimana cara Top Up Saldo?</h4>
-                                <p class="text-slate-600 dark:text-slate-300 text-xs leading-relaxed">Buka menu <b>Dompet & Top Up</b>, pilih nominal, lalu lakukan pembayaran via QRIS atau Payment Gateway otomatis.</p>
+                                <p class="text-slate-600 dark:text-slate-300 text-xs leading-relaxed">Buka menu <b>Dompet & Top Up</b>, pilih nominal, lalu scan QRIS Bank, QRIS ShopeePay, atau QRIS DANA yang tersedia.</p>
                             </div>
                             <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 space-y-1.5">
                                 <h4 class="font-extrabold text-emerald-500">2. Apakah item & progres game hilang?</h4>
@@ -456,25 +446,103 @@
                             </form>
                         </div>
 
-                        <!-- Daftar Game Terpublikasi & Tombol Edit Toko -->
                         <div class="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/80 dark:border-slate-800 p-6 space-y-4">
                             <h3 class="font-extrabold text-base">Daftar Game & Edit Harga Toko Item</h3>
                             <div id="admin-games-list" class="space-y-3"></div>
                         </div>
                     </div>
 
-                    <!-- TAB ADMIN 2: TOP UP & QRIS -->
+                    <!-- TAB ADMIN 2: TOP UP & QRIS (QRIS UTAMA, SHOPEEPAY, DANA + UPLOAD + KOMISI) -->
                     <div id="admin-panel-topup" class="hidden space-y-6">
                         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                            <!-- Pengaturan QRIS -->
+                            <!-- Pengaturan QRIS, ShopeePay & DANA -->
                             <div class="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/80 dark:border-slate-800 p-6 space-y-4">
                                 <h3 class="font-extrabold text-base flex items-center gap-2">
-                                    <i class="fa-solid fa-qrcode text-indigo-500"></i> Pengaturan QRIS Merchant
+                                    <i class="fa-solid fa-qrcode text-indigo-500"></i> Pengaturan QRIS Bank, ShopeePay & DANA
                                 </h3>
                                 <div class="space-y-3">
-                                    <input id="admin-qris-merchant" type="text" placeholder="Nama Merchant QRIS" class="w-full px-4 py-2.5 rounded-2xl bg-slate-100 dark:bg-slate-800 text-sm outline-none">
-                                    <input id="admin-qris-url" type="url" placeholder="URL Gambar QRIS (Opsional)" class="w-full px-4 py-2.5 rounded-2xl bg-slate-100 dark:bg-slate-800 text-sm outline-none">
-                                    <button onclick="saveAdminQris()" class="w-full py-2.5 rounded-2xl bg-indigo-600 text-white font-bold text-sm">Simpan Pengaturan QRIS</button>
+                                    <!-- QRIS Utama -->
+                                    <div class="space-y-2">
+                                        <label class="text-xs font-extrabold text-indigo-500 flex items-center gap-1.5">
+                                            <i class="fa-solid fa-qrcode"></i> QRIS Utama (Semua Bank / E-Wallet)
+                                        </label>
+                                        <input id="admin-qris-merchant" type="text" placeholder="Nama Merchant QRIS Utama" class="w-full px-4 py-2.5 rounded-2xl bg-slate-100 dark:bg-slate-800 text-sm outline-none">
+                                        <div class="flex items-center gap-3 p-2.5 rounded-2xl bg-slate-100 dark:bg-slate-800">
+                                            <img id="preview-qris-main" src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=GameZoneID-QRIS" alt="Preview QRIS Utama" class="w-14 h-14 rounded-xl bg-white object-contain border border-slate-300 dark:border-slate-700 p-1 shrink-0">
+                                            <div class="flex-1 space-y-1.5 min-w-0">
+                                                <label class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold cursor-pointer">
+                                                    <i class="fa-solid fa-upload"></i> Upload Gambar QRIS
+                                                    <input type="file" accept="image/*" onchange="handleQrisFileUpload(event, 'imageUrl', 'admin-qris-url', 'preview-qris-main')" class="hidden">
+                                                </label>
+                                                <input id="admin-qris-url" type="text" oninput="updateQrisPreview('preview-qris-main', this.value)" placeholder="Atau tempel URL Gambar QRIS Utama" class="w-full px-3 py-1.5 rounded-xl bg-white dark:bg-slate-900 text-xs outline-none">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- QRIS ShopeePay -->
+                                    <div class="pt-2 border-t border-slate-200/80 dark:border-slate-800 space-y-2.5">
+                                        <label class="text-xs font-extrabold text-orange-500 flex items-center gap-1.5">
+                                            <i class="fa-solid fa-bag-shopping"></i> QRIS Merchant Shopee / ShopeePay
+                                        </label>
+                                        <input id="admin-shopeepay-name" type="text" placeholder="Nama Merchant Shopee (misal: GameZone ID Shopee)" class="w-full px-4 py-2.5 rounded-2xl bg-slate-100 dark:bg-slate-800 text-sm outline-none">
+                                        <div class="flex items-center gap-3 p-2.5 rounded-2xl bg-slate-100 dark:bg-slate-800">
+                                            <img id="preview-qris-shopee" src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=ShopeePay-Merchant-GameZoneID" alt="Preview QRIS Shopee" class="w-14 h-14 rounded-xl bg-white object-contain border border-slate-300 dark:border-slate-700 p-1 shrink-0">
+                                            <div class="flex-1 space-y-1.5 min-w-0">
+                                                <label class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-orange-500 hover:bg-orange-600 text-white text-xs font-bold cursor-pointer">
+                                                    <i class="fa-solid fa-upload"></i> Upload QRIS Shopee
+                                                    <input type="file" accept="image/*" onchange="handleQrisFileUpload(event, 'shopeePayQrisUrl', 'admin-shopeepay-qris-url', 'preview-qris-shopee')" class="hidden">
+                                                </label>
+                                                <input id="admin-shopeepay-qris-url" type="text" oninput="updateQrisPreview('preview-qris-shopee', this.value)" placeholder="Atau tempel URL Gambar QRIS Shopee" class="w-full px-3 py-1.5 rounded-xl bg-white dark:bg-slate-900 text-xs outline-none">
+                                            </div>
+                                        </div>
+                                        <input id="admin-shopeepay-number" type="text" placeholder="Nomor HP / ID ShopeePay Cadangan (misal: 0812-3456-7890)" class="w-full px-4 py-2.5 rounded-2xl bg-slate-100 dark:bg-slate-800 text-sm outline-none">
+                                    </div>
+
+                                    <!-- QRIS DANA -->
+                                    <div class="pt-2 border-t border-slate-200/80 dark:border-slate-800 space-y-2.5">
+                                        <label class="text-xs font-extrabold text-sky-500 flex items-center gap-1.5">
+                                            <i class="fa-solid fa-wallet"></i> QRIS Merchant DANA / Aplikasi DANA
+                                        </label>
+                                        <input id="admin-dana-name" type="text" placeholder="Nama Akun / Merchant DANA (misal: GameZone ID DANA)" class="w-full px-4 py-2.5 rounded-2xl bg-slate-100 dark:bg-slate-800 text-sm outline-none">
+                                        <div class="flex items-center gap-3 p-2.5 rounded-2xl bg-slate-100 dark:bg-slate-800">
+                                            <img id="preview-qris-dana" src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=DANA-QRIS-GameZoneID" alt="Preview QRIS DANA" class="w-14 h-14 rounded-xl bg-white object-contain border border-slate-300 dark:border-slate-700 p-1 shrink-0">
+                                            <div class="flex-1 space-y-1.5 min-w-0">
+                                                <label class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-sky-500 hover:bg-sky-600 text-white text-xs font-bold cursor-pointer">
+                                                    <i class="fa-solid fa-upload"></i> Upload QRIS DANA
+                                                    <input type="file" accept="image/*" onchange="handleQrisFileUpload(event, 'danaQrisUrl', 'admin-dana-qris-url', 'preview-qris-dana')" class="hidden">
+                                                </label>
+                                                <input id="admin-dana-qris-url" type="text" oninput="updateQrisPreview('preview-qris-dana', this.value)" placeholder="Atau tempel URL Gambar QRIS DANA" class="w-full px-3 py-1.5 rounded-xl bg-white dark:bg-slate-900 text-xs outline-none">
+                                            </div>
+                                        </div>
+                                        <input id="admin-dana-number" type="text" placeholder="Nomor HP Akun DANA Cadangan (misal: 0812-3456-7890)" class="w-full px-4 py-2.5 rounded-2xl bg-slate-100 dark:bg-slate-800 text-sm outline-none">
+                                    </div>
+
+                                    <!-- Pengaturan Komisi / Biaya Layanan QRIS -->
+                                    <div class="pt-3 border-t border-slate-200/80 dark:border-slate-800 space-y-2.5">
+                                        <label class="text-xs font-extrabold text-emerald-500 flex items-center gap-1.5">
+                                            <i class="fa-solid fa-percent"></i> Tingkat Komisi / Biaya Layanan QRIS per Metode
+                                        </label>
+                                        <select id="admin-qris-fee-bearer" class="w-full px-3.5 py-2 rounded-2xl bg-slate-100 dark:bg-slate-800 text-xs font-bold outline-none">
+                                            <option value="buyer">Ditanggung Pembeli (Ditambahkan ke Total Bayar QRIS)</option>
+                                            <option value="merchant">Dipotong dari Saldo Masuk (Komisi Admin/MDR)</option>
+                                        </select>
+                                        <div class="grid grid-cols-3 gap-2 text-xs">
+                                            <div class="p-2.5 rounded-2xl bg-slate-100 dark:bg-slate-800 space-y-1">
+                                                <div class="font-bold text-indigo-500">QRIS Bank (%)</div>
+                                                <input id="admin-fee-qris" type="number" step="0.1" min="0" placeholder="0.7" class="w-full px-2.5 py-1.5 rounded-xl bg-white dark:bg-slate-900 font-bold outline-none">
+                                            </div>
+                                            <div class="p-2.5 rounded-2xl bg-slate-100 dark:bg-slate-800 space-y-1">
+                                                <div class="font-bold text-orange-500">ShopeePay (%)</div>
+                                                <input id="admin-fee-shopeepay" type="number" step="0.1" min="0" placeholder="1.5" class="w-full px-2.5 py-1.5 rounded-xl bg-white dark:bg-slate-900 font-bold outline-none">
+                                            </div>
+                                            <div class="p-2.5 rounded-2xl bg-slate-100 dark:bg-slate-800 space-y-1">
+                                                <div class="font-bold text-sky-500">QRIS DANA (%)</div>
+                                                <input id="admin-fee-dana" type="number" step="0.1" min="0" placeholder="1.0" class="w-full px-2.5 py-1.5 rounded-xl bg-white dark:bg-slate-900 font-bold outline-none">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <button onclick="saveAdminQris()" class="w-full py-2.5 rounded-2xl bg-indigo-600 text-white font-bold text-sm">Simpan Pengaturan QRIS, ShopeePay, DANA & Komisi</button>
                                 </div>
                             </div>
 
@@ -520,7 +588,7 @@
                         </div>
                     </div>
 
-                    <!-- TAB ADMIN 4: SDK & DETEKSI ITEM (KHUSUS ADMIN) -->
+                    <!-- TAB ADMIN 4: SDK & DETEKSI ITEM -->
                     <div id="admin-panel-sdk" class="hidden bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/80 dark:border-slate-800 p-6 space-y-4">
                         <div class="flex items-center justify-between">
                             <h3 class="font-extrabold text-base flex items-center gap-2">
@@ -555,9 +623,8 @@
         </div>
     </div>
 
-    <!-- ==================== MODAL PLAYER GAME (FULL LAYAR + TOKO + CHAT) ==================== -->
+    <!-- ==================== MODAL PLAYER GAME ==================== -->
     <div id="game-player-modal" class="fixed inset-0 z-[90] bg-slate-950/95 backdrop-blur-xl hidden flex-col">
-        <!-- Top Bar Player -->
         <div class="px-4 py-3 bg-slate-900 border-b border-slate-800 flex items-center justify-between gap-3 text-white">
             <div class="flex items-center gap-3 min-w-0">
                 <button onclick="closeGamePlayer()" class="px-3.5 py-2 rounded-xl bg-rose-600 hover:bg-rose-500 text-xs font-extrabold shrink-0">
@@ -582,11 +649,9 @@
             </div>
         </div>
 
-        <!-- Area Iframe + Side Drawer -->
         <div id="player-body-container" class="flex-1 flex relative overflow-hidden">
             <iframe id="game-iframe" class="w-full h-full border-0 bg-black" allow="autoplay; fullscreen; gamepad"></iframe>
 
-            <!-- Drawer Toko & In-Game Chat -->
             <div id="player-side-drawer" class="hidden w-full sm:w-80 bg-slate-900 border-l border-slate-800 text-white flex flex-col z-20">
                 <div class="p-3.5 border-b border-slate-800 flex items-center justify-between">
                     <span id="player-drawer-title" class="font-extrabold text-sm">Toko Item Game</span>
@@ -616,7 +681,6 @@
                 </button>
             </div>
 
-            <!-- Form Login -->
             <form id="auth-login-form" onsubmit="handleLoginSubmit(event)" class="space-y-3.5">
                 <input id="login-username" type="text" required placeholder="Username" class="w-full px-4 py-3 rounded-2xl bg-slate-100 dark:bg-slate-800 text-sm outline-none">
                 <input id="login-password" type="password" required placeholder="Password" class="w-full px-4 py-3 rounded-2xl bg-slate-100 dark:bg-slate-800 text-sm outline-none">
@@ -627,7 +691,6 @@
                 <p class="text-center text-xs text-slate-400">Belum punya akun? <button type="button" onclick="switchAuthMode('register')" class="text-indigo-500 font-bold hover:underline">Daftar Gratis</button></p>
             </form>
 
-            <!-- Form Daftar -->
             <form id="auth-register-form" onsubmit="handleRegisterSubmit(event)" class="hidden space-y-3.5">
                 <input id="reg-name" type="text" required placeholder="Nama Tampilan" class="w-full px-4 py-3 rounded-2xl bg-slate-100 dark:bg-slate-800 text-sm outline-none">
                 <input id="reg-username" type="text" required placeholder="Username (tanpa spasi)" class="w-full px-4 py-3 rounded-2xl bg-slate-100 dark:bg-slate-800 text-sm outline-none">
@@ -637,18 +700,16 @@
                 <p class="text-center text-xs text-slate-400">Sudah punya akun? <button type="button" onclick="switchAuthMode('login')" class="text-indigo-500 font-bold hover:underline">Masuk</button></p>
             </form>
 
-            <!-- Form Lupa Password OTP Email -->
             <div id="auth-forgot-form" class="hidden space-y-3.5">
-                <p class="text-xs text-slate-500 dark:text-slate-400">Masukkan email terdaftar Anda untuk menerima kode OTP 6 digit pengaturan ulang password.</p>
                 <div class="flex gap-2">
-                    <input id="forgot-email" type="email" placeholder="alamat@email.com" class="flex-1 px-4 py-2.5 rounded-2xl bg-slate-100 dark:bg-slate-800 text-sm outline-none">
-                    <button type="button" onclick="sendPasswordOtp()" class="px-4 py-2.5 rounded-2xl bg-indigo-600 text-white font-bold text-xs shrink-0">Kirim OTP</button>
+                    <input id="forgot-email" type="email" placeholder="Masukkan Email Terdaftar" class="flex-1 px-4 py-3 rounded-2xl bg-slate-100 dark:bg-slate-800 text-sm outline-none">
+                    <button type="button" onclick="sendPasswordOtp()" class="px-4 py-3 rounded-2xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs shrink-0">Kirim OTP</button>
                 </div>
                 <div id="otp-inbox-sim" class="hidden p-3 rounded-2xl bg-amber-500/15 border border-amber-500/30 text-xs text-amber-600 dark:text-amber-300"></div>
-                <input id="forgot-otp-code" type="text" maxlength="6" placeholder="Masukkan 6 Digit Kode OTP" class="w-full px-4 py-2.5 rounded-2xl bg-slate-100 dark:bg-slate-800 text-sm outline-none">
-                <input id="forgot-new-password" type="password" placeholder="Password Baru" class="w-full px-4 py-2.5 rounded-2xl bg-slate-100 dark:bg-slate-800 text-sm outline-none">
-                <button type="button" onclick="verifyOtpAndResetPassword()" class="w-full py-3 rounded-2xl bg-emerald-600 text-white font-extrabold text-sm">Verifikasi OTP & Simpan Password</button>
-                <p class="text-center text-xs"><button type="button" onclick="switchAuthMode('login')" class="text-slate-400 hover:underline">Kembali ke Login</button></p>
+                <input id="forgot-otp-code" type="text" maxlength="6" placeholder="Kode OTP 6 Digit" class="w-full px-4 py-3 rounded-2xl bg-slate-100 dark:bg-slate-800 text-sm outline-none tracking-widest font-bold">
+                <input id="forgot-new-password" type="password" placeholder="Password Baru" class="w-full px-4 py-3 rounded-2xl bg-slate-100 dark:bg-slate-800 text-sm outline-none">
+                <button type="button" onclick="verifyOtpAndResetPassword()" class="w-full py-3 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-sm">Verifikasi OTP & Simpan Password</button>
+                <p class="text-center text-xs text-slate-400"><button type="button" onclick="switchAuthMode('login')" class="text-indigo-500 font-bold hover:underline">Kembali ke Login</button></p>
             </div>
         </div>
     </div>
@@ -657,37 +718,100 @@
     <div id="edit-profile-modal" class="fixed inset-0 z-[100] bg-slate-950/75 backdrop-blur-sm hidden items-center justify-center p-4">
         <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl max-w-md w-full p-6 space-y-4 shadow-2xl">
             <div class="flex items-center justify-between">
-                <h3 class="text-lg font-black">Edit Profil Akun</h3>
+                <h3 class="text-lg font-black">Edit Profil & Keamanan Akun</h3>
                 <button onclick="closeEditProfileModal()" class="w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-400"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <form onsubmit="saveProfileEdit(event)" class="space-y-3">
                 <input id="edit-profile-name" type="text" required placeholder="Nama Tampilan" class="w-full px-4 py-2.5 rounded-2xl bg-slate-100 dark:bg-slate-800 text-sm outline-none">
                 <input id="edit-profile-email" type="email" required placeholder="Email Pemulihan OTP" class="w-full px-4 py-2.5 rounded-2xl bg-slate-100 dark:bg-slate-800 text-sm outline-none">
-                <input id="edit-profile-password" type="password" placeholder="Password Baru (kosongkan jika tetap)" class="w-full px-4 py-2.5 rounded-2xl bg-slate-100 dark:bg-slate-800 text-sm outline-none">
-                <button type="submit" class="w-full py-3 rounded-2xl bg-indigo-600 text-white font-extrabold text-sm">Simpan Perubahan Profil</button>
+                <input id="edit-profile-password" type="password" placeholder="Password Baru (kosongkan jika tidak diubah)" class="w-full px-4 py-2.5 rounded-2xl bg-slate-100 dark:bg-slate-800 text-sm outline-none">
+                <button type="submit" class="w-full py-3 rounded-2xl bg-indigo-600 text-white font-extrabold text-sm">Simpan Perubahan</button>
             </form>
         </div>
     </div>
 
-    <!-- ==================== MODAL TOP UP QRIS / PAYMENT GATEWAY ==================== -->
-    <div id="topup-modal" class="fixed inset-0 z-[100] bg-slate-950/75 backdrop-blur-sm hidden items-center justify-center p-4">
-        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl max-w-md w-full p-6 space-y-4 text-center shadow-2xl">
+    <!-- ==================== MODAL TOP UP QRIS / SHOPEEPAY / DANA ==================== -->
+    <div id="topup-modal" class="fixed inset-0 z-[100] bg-slate-950/75 backdrop-blur-sm hidden items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl max-w-md w-full p-6 space-y-4 shadow-2xl my-auto">
             <div class="flex items-center justify-between">
-                <h3 class="text-lg font-black">Checkout Top Up Saldo</h3>
+                <h3 class="text-lg font-black">Top Up Saldo Dompet</h3>
                 <button onclick="closeTopupModal()" class="w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-400"><i class="fa-solid fa-xmark"></i></button>
             </div>
-            <div class="p-4 rounded-2xl bg-indigo-500/10 border border-indigo-500/20">
-                <div class="text-xs text-slate-400">Nominal Top Up</div>
-                <div id="topup-modal-amount" class="text-2xl font-black text-indigo-500 mt-0.5">Rp 0</div>
-                <div id="topup-merchant-label" class="text-[11px] text-slate-400 mt-1">QRIS GameZone ID</div>
+
+            <!-- Rincian Nominal & Komisi -->
+            <div class="p-4 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 space-y-1.5">
+                <div class="flex items-center justify-between text-xs text-slate-400">
+                    <span>Nominal Top Up</span>
+                    <span id="topup-modal-amount" class="font-bold text-slate-700 dark:text-slate-200">Rp 0</span>
+                </div>
+                <div class="flex items-center justify-between text-xs text-slate-400">
+                    <span id="topup-fee-label">Komisi / Biaya Layanan (0.7%)</span>
+                    <span id="topup-fee-amount" class="font-bold text-amber-500">Rp 0</span>
+                </div>
+                <div class="pt-1.5 border-t border-indigo-500/20 flex items-center justify-between">
+                    <span class="text-xs font-extrabold text-indigo-400">Total Transfer QRIS</span>
+                    <span id="topup-total-pay" class="text-xl font-black text-indigo-500">Rp 0</span>
+                </div>
+                <div id="topup-net-credit-info" class="text-[11px] font-semibold text-emerald-500 text-right">Saldo diterima: Rp 0</div>
             </div>
-            <img id="topup-qris-img" src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=GameZoneID-QRIS" alt="QRIS" class="w-44 h-44 mx-auto rounded-2xl border border-slate-200 dark:border-slate-700 p-2 bg-white">
+
+            <!-- Pilihan 3 Metode: QRIS Bank, ShopeePay, QRIS DANA -->
+            <div class="grid grid-cols-3 gap-1.5 p-1 rounded-2xl bg-slate-100 dark:bg-slate-800">
+                <button type="button" id="topup-method-qris-btn" onclick="switchTopupMethod('qris')" class="py-2 rounded-xl text-[11px] font-extrabold bg-indigo-600 text-white shadow-sm transition-all">
+                    <i class="fa-solid fa-qrcode mr-1"></i>QRIS Bank
+                </button>
+                <button type="button" id="topup-method-shopeepay-btn" onclick="switchTopupMethod('shopeepay')" class="py-2 rounded-xl text-[11px] font-extrabold text-slate-600 dark:text-slate-300 transition-all">
+                    <i class="fa-solid fa-bag-shopping mr-1 text-orange-500"></i>ShopeePay
+                </button>
+                <button type="button" id="topup-method-dana-btn" onclick="switchTopupMethod('dana')" class="py-2 rounded-xl text-[11px] font-extrabold text-slate-600 dark:text-slate-300 transition-all">
+                    <i class="fa-solid fa-wallet mr-1 text-sky-500"></i>QRIS DANA
+                </button>
+            </div>
+
+            <!-- Panel QRIS Utama -->
+            <div id="topup-panel-qris" class="space-y-2 text-center">
+                <div id="topup-merchant-label" class="text-xs font-bold text-slate-400">QRIS GameZone ID</div>
+                <img id="topup-qris-img" src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=GameZoneID-QRIS" alt="QRIS" class="w-44 h-44 mx-auto rounded-2xl border border-slate-200 dark:border-slate-700 p-2 bg-white">
+            </div>
+
+            <!-- Panel QRIS Merchant Shopee / ShopeePay -->
+            <div id="topup-panel-shopeepay" class="hidden p-4 rounded-2xl bg-orange-500/10 border border-orange-500/30 space-y-2.5 text-center">
+                <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-orange-500 text-white text-[11px] font-extrabold">
+                    <i class="fa-solid fa-bag-shopping"></i> Scan QRIS Merchant Shopee
+                </div>
+                <div id="topup-shopeepay-name-display" class="text-xs font-extrabold text-orange-600 dark:text-orange-400">Merchant: GameZone ID Shopee</div>
+                <img id="topup-shopeepay-qris-img" src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=ShopeePay-Merchant-GameZoneID" alt="QRIS Merchant Shopee" class="w-44 h-44 mx-auto rounded-2xl border-2 border-orange-400/50 p-2 bg-white shadow-sm">
+                <div class="pt-1 flex items-center justify-center gap-2 text-[11px] text-slate-500 dark:text-slate-300">
+                    <span>ID / No. ShopeePay: <b id="topup-shopeepay-number-display" class="text-orange-500">0812-3456-7890</b></span>
+                    <button type="button" onclick="copyShopeePayNumber()" class="px-2 py-0.5 rounded-md bg-orange-500/20 hover:bg-orange-500/30 text-orange-600 dark:text-orange-400 font-bold">
+                        <i class="fa-regular fa-copy mr-1"></i>Salin
+                    </button>
+                </div>
+                <p class="text-[11px] text-slate-400">Buka aplikasi Shopee → pilih <b>Scan QR</b> → arahkan ke QRIS Merchant Shopee di atas.</p>
+            </div>
+
+            <!-- Panel QRIS Aplikasi DANA -->
+            <div id="topup-panel-dana" class="hidden p-4 rounded-2xl bg-sky-500/10 border border-sky-500/30 space-y-2.5 text-center">
+                <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-sky-500 text-white text-[11px] font-extrabold">
+                    <i class="fa-solid fa-wallet"></i> Scan QRIS via Aplikasi DANA
+                </div>
+                <div id="topup-dana-name-display" class="text-xs font-extrabold text-sky-600 dark:text-sky-400">Akun DANA: GameZone ID DANA</div>
+                <img id="topup-dana-qris-img" src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=DANA-QRIS-GameZoneID" alt="QRIS Aplikasi DANA" class="w-44 h-44 mx-auto rounded-2xl border-2 border-sky-400/50 p-2 bg-white shadow-sm">
+                <div class="pt-1 flex items-center justify-center gap-2 text-[11px] text-slate-500 dark:text-slate-300">
+                    <span>No. DANA: <b id="topup-dana-number-display" class="text-sky-500">0812-3456-7890</b></span>
+                    <button type="button" onclick="copyDanaNumber()" class="px-2 py-0.5 rounded-md bg-sky-500/20 hover:bg-sky-500/30 text-sky-600 dark:text-sky-400 font-bold">
+                        <i class="fa-regular fa-copy mr-1"></i>Salin
+                    </button>
+                </div>
+                <p class="text-[11px] text-slate-400">Buka aplikasi <b>DANA</b> → ketuk tombol <b>Pay / Pindai</b> di bawah → scan kode QRIS DANA di atas.</p>
+            </div>
+
             <div class="space-y-2">
                 <button id="topup-pg-instant-btn" onclick="processPaymentGatewayInstant()" class="hidden w-full py-3 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-sm">
                     <i class="fa-solid fa-bolt mr-1.5"></i>Bayar Instan via Payment Gateway
                 </button>
-                <button onclick="submitManualQrisTopup()" class="w-full py-3 rounded-2xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-sm">
-                    Saya Sudah Transfer QRIS (Kirim Bukti ke Admin)
+                <button id="topup-confirm-manual-btn" onclick="submitManualQrisTopup()" class="w-full py-3 rounded-2xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-sm">
+                    Saya Sudah Transfer QRIS (Kirim ke Admin)
                 </button>
             </div>
         </div>
@@ -713,9 +837,9 @@
     <!-- ==================== JAVASCRIPT UTAMA PORTAL ==================== -->
     <script>
         const STORAGE_KEY = 'gamezone_id_state_v4';
-        const DEFAULT_APPSCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx-4OVGcZ0YtpBq7xu665t8yAiG_blZAa40p9RfWj97jMVC6wOe-_0RqOYFAX59A7GR/exec';
+        const DEFAULT_APPSCRIPT_URL = '';
 
-        // Game HTML5 Interaktif Bawaan (Langsung bisa dimainkan & mendukung SDK)
+        // Game HTML5 Interaktif Bawaan
         const BUILTIN_SPACE_HTML = `<!DOCTYPE html><html><head><meta name="viewport" content="width=device-width,initial-scale=1"><style>body{margin:0;background:#090d16;color:#fff;font-family:sans-serif;display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;overflow:hidden}canvas{background:radial-gradient(circle at center,#16213e,#090d16);border:2px solid #334155;border-radius:16px;max-width:95vw;max-height:72vh}#hud{display:flex;gap:16px;margin-bottom:10px;font-weight:bold;font-size:14px}button{background:#4f46e5;color:#fff;border:none;padding:8px 14px;border-radius:10px;font-weight:bold;cursor:pointer}</style></head><body><div id="hud"><span>Skor: <b id="sc">0</b></span><span>Senjata: <b id="wp">Laser Standar</b></span><button onclick="buyLaser()">Upgrade Plasma (Rp 10.000)</button></div><canvas id="c" width="420" height="520"></canvas><script>
 const SHOP_ITEMS=[{id:'plasma_gun',name:'Upgrade Plasma Cannon',price:10000},{id:'mega_shield',name:'Perisai Galaksi',price:15000}];
 window.parent.postMessage({type:'GZ_REGISTER_ITEMS',items:SHOP_ITEMS},'*');
@@ -740,14 +864,26 @@ function buyDrill(){window.parent.postMessage({type:'GZ_BUY_ITEM',item:SHOP_ITEM
 window.addEventListener('message',e=>{const m=e.data||{};if(m.type==='GZ_PURCHASE_SUCCESS'){pw=5;document.getElementById('pw').textContent='5x Turbo';window.parent.postMessage({type:'GZ_UNLOCK_ACHIEVEMENT',achievement:{id:'ach_turbo_drill',title:'Taipan Tambang',desc:'Mengaktifkan Bor Kristal 5x Turbo!'}},'*');}if(m.type==='GZ_INIT_DATA'&&m.savedProgress&&m.savedProgress.score){cr=m.savedProgress.score;document.getElementById('cr').textContent=cr;}});
 <\/script></body></html>`;
 
-        // State Awal Portal (currentUser: null -> Pengunjung tidak otomatis masuk admin)
+        // State Awal Portal
         const DEFAULT_STATE = {
             currentUser: null,
             theme: 'dark',
             appScriptUrl: DEFAULT_APPSCRIPT_URL,
             qris: {
                 merchant: 'GameZone ID Official QRIS',
-                imageUrl: 'https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=GameZoneID-Merchant-QRIS'
+                imageUrl: 'https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=GameZoneID-Merchant-QRIS',
+                shopeePayQrisUrl: 'https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=ShopeePay-Merchant-GameZoneID',
+                shopeePayNumber: '0812-3456-7890',
+                shopeePayName: 'GameZone ID Shopee',
+                danaQrisUrl: 'https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=DANA-QRIS-GameZoneID',
+                danaNumber: '0812-3456-7890',
+                danaName: 'GameZone ID DANA',
+                feeBearer: 'buyer',
+                fees: {
+                    qris: 0.7,
+                    shopeepay: 1.5,
+                    dana: 1.0
+                }
             },
             paymentGateway: {
                 provider: 'midtrans',
@@ -839,6 +975,7 @@ window.addEventListener('message',e=>{const m=e.data||{};if(m.type==='GZ_PURCHAS
         let activeChatChannel = 'global';
         let activeGameId = null;
         let pendingTopupAmount = 0;
+        let selectedTopupMethod = 'qris';
         let pendingOtpData = null;
         let editingShopGameId = null;
         let autoSyncTimer = null;
@@ -859,7 +996,11 @@ window.addEventListener('message',e=>{const m=e.data||{};if(m.type==='GZ_PURCHAS
                     appState = {
                         ...DEFAULT_STATE,
                         ...parsed,
-                        qris: { ...DEFAULT_STATE.qris, ...(parsed.qris || {}) },
+                        qris: {
+                            ...DEFAULT_STATE.qris,
+                            ...(parsed.qris || {}),
+                            fees: { ...DEFAULT_STATE.qris.fees, ...((parsed.qris && parsed.qris.fees) || {}) }
+                        },
                         paymentGateway: { ...DEFAULT_STATE.paymentGateway, ...(parsed.paymentGateway || {}) },
                         users: parsed.users || DEFAULT_STATE.users,
                         games: Array.isArray(parsed.games) && parsed.games.length ? parsed.games : DEFAULT_STATE.games,
@@ -1399,7 +1540,7 @@ window.addEventListener('message',e=>{const m=e.data||{};if(m.type==='GZ_PURCHAS
             }
         });
 
-        // ==================== DOMPET, TOP UP & PROFIL ====================
+        // ==================== DOMPET, TOP UP (QRIS BANK, SHOPEEPAY, DANA) & PROFIL ====================
         function renderWalletView() {
             const user = getActiveUser();
             const guestBanner = document.getElementById('wallet-guest-banner');
@@ -1439,23 +1580,43 @@ window.addEventListener('message',e=>{const m=e.data||{};if(m.type==='GZ_PURCHAS
                 <div class="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/70 flex items-center justify-between">
                     <div>
                         <div class="font-bold text-xs">${it.name}</div>
-                        <div class="text-[11px] text-slate-400">${it.gameTitle} • ${it.purchasedAt}</div>
+                        <div class="text-[11px] text-slate-400">${it.gameTitle || 'GameZone ID'} • ${it.purchasedAt || ''}</div>
                     </div>
-                    <span class="text-[11px] font-extrabold text-emerald-500">Aktif</span>
+                    <span class="text-xs font-extrabold text-emerald-500">${formatRupiah(it.price)}</span>
                 </div>
             `).join('') : `<div class="text-xs text-slate-400 py-4">Belum ada item yang dibeli.</div>`;
 
-            // Transaksi
+            // Riwayat Transaksi
             const txs = user.transactions || [];
             document.getElementById('wallet-transactions-list').innerHTML = txs.length ? txs.map(t => `
-                <div class="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/70 flex items-center justify-between text-xs">
+                <div class="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/70 flex items-center justify-between gap-2 text-xs">
                     <div>
                         <div class="font-bold">${t.label}</div>
-                        <div class="text-[11px] text-slate-400">${t.date} • ${t.status}</div>
+                        <div class="text-[11px] text-slate-400">${t.date} • <span class="font-semibold">${t.status}</span></div>
                     </div>
-                    <span class="font-extrabold ${t.amount >= 0 ? 'text-emerald-500' : 'text-rose-500'}">${t.amount >= 0 ? '+' : ''}${formatRupiah(t.amount)}</span>
+                    <span class="font-black ${t.amount >= 0 ? 'text-emerald-500' : 'text-rose-500'}">${t.amount >= 0 ? '+' : ''}${formatRupiah(t.amount)}</span>
                 </div>
             `).join('') : `<div class="text-xs text-slate-400 py-4">Belum ada riwayat transaksi.</div>`;
+        }
+
+        function calculateQrisCommission(amount, method) {
+            const fees = (appState.qris && appState.qris.fees) || { qris: 0.7, shopeepay: 1.5, dana: 1.0 };
+            const rate = Number(fees[method] || 0);
+            const bearer = (appState.qris && appState.qris.feeBearer) || 'buyer';
+            const feeAmount = Math.round((Number(amount) * rate) / 100);
+            if (bearer === 'buyer') {
+                return { rate, bearer, feeAmount, totalPay: Number(amount) + feeAmount, netCredit: Number(amount) };
+            }
+            return { rate, bearer, feeAmount, totalPay: Number(amount), netCredit: Math.max(0, Number(amount) - feeAmount) };
+        }
+
+        function updateTopupCommissionUI() {
+            const calc = calculateQrisCommission(pendingTopupAmount, selectedTopupMethod);
+            document.getElementById('topup-modal-amount').textContent = formatRupiah(pendingTopupAmount);
+            document.getElementById('topup-fee-label').textContent = `Komisi / MDR (${calc.rate}%)`;
+            document.getElementById('topup-fee-amount').textContent = (calc.bearer === 'buyer' ? '+ ' : '- ') + formatRupiah(calc.feeAmount);
+            document.getElementById('topup-total-pay').textContent = formatRupiah(calc.totalPay);
+            document.getElementById('topup-net-credit-info').textContent = `Saldo diterima pemain: ${formatRupiah(calc.netCredit)}`;
         }
 
         function openTopupCheckout(amount) {
@@ -1465,9 +1626,18 @@ window.addEventListener('message',e=>{const m=e.data||{};if(m.type==='GZ_PURCHAS
                 return;
             }
             pendingTopupAmount = amount;
-            document.getElementById('topup-modal-amount').textContent = formatRupiah(amount);
             document.getElementById('topup-merchant-label').textContent = appState.qris.merchant || 'QRIS GameZone ID';
             document.getElementById('topup-qris-img').src = appState.qris.imageUrl || 'https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=GameZoneID-QRIS';
+            document.getElementById('topup-shopeepay-qris-img').src = appState.qris.shopeePayQrisUrl || 'https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=ShopeePay-Merchant-GameZoneID';
+            document.getElementById('topup-shopeepay-number-display').textContent = appState.qris.shopeePayNumber || '0812-3456-7890';
+            document.getElementById('topup-shopeepay-name-display').textContent = 'Merchant: ' + (appState.qris.shopeePayName || 'GameZone ID Shopee');
+            document.getElementById('topup-dana-qris-img').src = appState.qris.danaQrisUrl || 'https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=DANA-QRIS-GameZoneID';
+            document.getElementById('topup-dana-number-display').textContent = appState.qris.danaNumber || '0812-3456-7890';
+            document.getElementById('topup-dana-name-display').textContent = 'Akun DANA: ' + (appState.qris.danaName || 'GameZone ID DANA');
+
+            switchTopupMethod('qris');
+            updateTopupCommissionUI();
+
             const pgBtn = document.getElementById('topup-pg-instant-btn');
             if (appState.paymentGateway && appState.paymentGateway.enabled) {
                 pgBtn.classList.remove('hidden');
@@ -1478,6 +1648,50 @@ window.addEventListener('message',e=>{const m=e.data||{};if(m.type==='GZ_PURCHAS
             document.getElementById('topup-modal').classList.add('flex');
         }
 
+        function switchTopupMethod(method) {
+            selectedTopupMethod = method;
+            const isQris = method === 'qris';
+            const isShopee = method === 'shopeepay';
+            const isDana = method === 'dana';
+
+            document.getElementById('topup-panel-qris').classList.toggle('hidden', !isQris);
+            document.getElementById('topup-panel-shopeepay').classList.toggle('hidden', !isShopee);
+            document.getElementById('topup-panel-dana').classList.toggle('hidden', !isDana);
+
+            document.getElementById('topup-method-qris-btn').className = isQris
+                ? 'py-2 rounded-xl text-[11px] font-extrabold bg-indigo-600 text-white shadow-sm transition-all'
+                : 'py-2 rounded-xl text-[11px] font-extrabold text-slate-600 dark:text-slate-300 transition-all';
+            document.getElementById('topup-method-shopeepay-btn').className = isShopee
+                ? 'py-2 rounded-xl text-[11px] font-extrabold bg-orange-500 text-white shadow-sm transition-all'
+                : 'py-2 rounded-xl text-[11px] font-extrabold text-slate-600 dark:text-slate-300 transition-all';
+            document.getElementById('topup-method-dana-btn').className = isDana
+                ? 'py-2 rounded-xl text-[11px] font-extrabold bg-sky-500 text-white shadow-sm transition-all'
+                : 'py-2 rounded-xl text-[11px] font-extrabold text-slate-600 dark:text-slate-300 transition-all';
+
+            const confirmBtn = document.getElementById('topup-confirm-manual-btn');
+            if (isQris) {
+                confirmBtn.className = 'w-full py-3 rounded-2xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-sm';
+                confirmBtn.textContent = 'Saya Sudah Transfer QRIS (Kirim ke Admin)';
+            } else if (isShopee) {
+                confirmBtn.className = 'w-full py-3 rounded-2xl bg-orange-500 hover:bg-orange-600 text-white font-bold text-sm';
+                confirmBtn.textContent = 'Saya Sudah Bayar QRIS ShopeePay (Kirim ke Admin)';
+            } else {
+                confirmBtn.className = 'w-full py-3 rounded-2xl bg-sky-500 hover:bg-sky-600 text-white font-bold text-sm';
+                confirmBtn.textContent = 'Saya Sudah Bayar QRIS DANA (Kirim ke Admin)';
+            }
+            updateTopupCommissionUI();
+        }
+
+        function copyShopeePayNumber() {
+            const num = appState.qris.shopeePayNumber || '0812-3456-7890';
+            copyTextFallback(num, 'Nomor ShopeePay berhasil disalin!');
+        }
+
+        function copyDanaNumber() {
+            const num = appState.qris.danaNumber || '0812-3456-7890';
+            copyTextFallback(num, 'Nomor DANA berhasil disalin!');
+        }
+
         function closeTopupModal() {
             document.getElementById('topup-modal').classList.add('hidden');
             document.getElementById('topup-modal').classList.remove('flex');
@@ -1486,11 +1700,17 @@ window.addEventListener('message',e=>{const m=e.data||{};if(m.type==='GZ_PURCHAS
         function submitManualQrisTopup() {
             const user = getActiveUser();
             if (!user || !pendingTopupAmount) return;
+            const methodLabel = selectedTopupMethod === 'shopeepay' ? 'ShopeePay' : selectedTopupMethod === 'dana' ? 'QRIS DANA' : 'QRIS';
+            const calc = calculateQrisCommission(pendingTopupAmount, selectedTopupMethod);
             appState.topupRequests.unshift({
                 id: 'TOP-' + Date.now(),
                 username: user.username,
                 name: user.name,
-                amount: pendingTopupAmount,
+                method: methodLabel,
+                amount: calc.netCredit,
+                totalPay: calc.totalPay,
+                feeAmount: calc.feeAmount,
+                feeRate: calc.rate,
                 status: 'pending',
                 date: new Date().toLocaleString('id-ID')
             });
@@ -1498,15 +1718,15 @@ window.addEventListener('message',e=>{const m=e.data||{};if(m.type==='GZ_PURCHAS
             user.transactions.unshift({
                 id: 'TRX-' + Date.now(),
                 type: 'topup',
-                label: 'Top Up QRIS (Menunggu Verifikasi Admin)',
-                amount: pendingTopupAmount,
+                label: `Top Up ${methodLabel} (Bayar ${formatRupiah(calc.totalPay)} • Komisi ${calc.rate}%)`,
+                amount: calc.netCredit,
                 status: 'Pending',
                 date: new Date().toLocaleString('id-ID')
             });
             saveState();
             closeTopupModal();
             renderWalletView();
-            showToast('Permintaan Top Up QRIS terkirim! Menunggu persetujuan Admin.', 'success');
+            showToast(`Permintaan Top Up ${methodLabel} (${formatRupiah(calc.totalPay)}) terkirim!`, 'success');
         }
 
         function processPaymentGatewayInstant() {
@@ -1918,67 +2138,130 @@ window.addEventListener('message',e=>{const m=e.data||{};if(m.type==='GZ_PURCHAS
 
         function renderEditShopRows(items) {
             const container = document.getElementById('edit-shop-items-container');
-            container.innerHTML = items.length ? items.map((it, idx) => `
+            container.innerHTML = items.length ? items.map(it => `
                 <div class="shop-edit-row grid grid-cols-12 gap-2 items-center p-2.5 rounded-2xl bg-slate-100 dark:bg-slate-800" data-id="${it.id}">
                     <input type="text" value="${it.name}" class="shop-row-name col-span-6 px-3 py-1.5 rounded-xl bg-white dark:bg-slate-900 text-xs font-bold outline-none">
                     <input type="number" value="${it.price}" class="shop-row-price col-span-4 px-3 py-1.5 rounded-xl bg-white dark:bg-slate-900 text-xs font-bold outline-none">
-                    <button type="button" onclick="this.parentElement.remove()" class="col-span-2 py-1.5 rounded-xl bg-rose-500/15 text-rose-500 text-xs font-bold"><i class="fa-solid fa-trash"></i></button>
+                    <button type="button" onclick="this.parentElement.remove()" class="col-span-2 py-1.5 rounded-xl bg-rose-500/15 text-rose-500 text-xs font-bold">Hapus</button>
                 </div>
             `).join('') : `<div class="text-xs text-slate-400 text-center py-4">Belum ada item. Tambahkan item baru di bawah.</div>`;
         }
 
         function addShopItemRow() {
-            const name = document.getElementById('new-shop-item-name').value.trim();
-            const price = Number(document.getElementById('new-shop-item-price').value);
-            if (!name || !price) return;
-            const game = appState.games.find(g => g.id === editingShopGameId);
-            if (!game) return;
-            game.shopItems = game.shopItems || [];
-            game.shopItems.push({ id: 'item_' + Date.now(), name, price });
-            document.getElementById('new-shop-item-name').value = '';
-            document.getElementById('new-shop-item-price').value = '';
-            renderEditShopRows(game.shopItems);
+            const nameInput = document.getElementById('new-shop-item-name');
+            const priceInput = document.getElementById('new-shop-item-price');
+            const name = nameInput.value.trim();
+            const price = Number(priceInput.value);
+            if (!name || price <= 0) {
+                showToast('Masukkan nama item dan harga yang valid!', 'error');
+                return;
+            }
+            const container = document.getElementById('edit-shop-items-container');
+            if (container.querySelector('.text-center')) container.innerHTML = '';
+            const row = document.createElement('div');
+            row.className = 'shop-edit-row grid grid-cols-12 gap-2 items-center p-2.5 rounded-2xl bg-slate-100 dark:bg-slate-800';
+            row.setAttribute('data-id', 'item_' + Date.now());
+            row.innerHTML = `
+                <input type="text" value="${name}" class="shop-row-name col-span-6 px-3 py-1.5 rounded-xl bg-white dark:bg-slate-900 text-xs font-bold outline-none">
+                <input type="number" value="${price}" class="shop-row-price col-span-4 px-3 py-1.5 rounded-xl bg-white dark:bg-slate-900 text-xs font-bold outline-none">
+                <button type="button" onclick="this.parentElement.remove()" class="col-span-2 py-1.5 rounded-xl bg-rose-500/15 text-rose-500 text-xs font-bold">Hapus</button>
+            `;
+            container.appendChild(row);
+            nameInput.value = '';
+            priceInput.value = '';
         }
 
         function saveEditedShopItems() {
             const game = appState.games.find(g => g.id === editingShopGameId);
             if (!game) return;
-            const rows = document.querySelectorAll('.shop-edit-row');
-            const updated = [];
+            const rows = document.querySelectorAll('#edit-shop-items-container .shop-edit-row');
+            const updatedItems = [];
             rows.forEach(r => {
-                const id = r.getAttribute('data-id');
+                const id = r.getAttribute('data-id') || ('item_' + Date.now());
                 const name = r.querySelector('.shop-row-name').value.trim();
                 const price = Number(r.querySelector('.shop-row-price').value);
-                if (name && price >= 0) updated.push({ id, name, price });
+                if (name && price > 0) updatedItems.push({ id, name, price });
             });
-            game.shopItems = updated;
-
-            // Sinkronkan harga & nama item langsung ke sourceCode HTML jika berbasis HTML
-            if (game.sourceType === 'html' && game.sourceCode) {
-                updated.forEach(it => {
-                    const itemRegex = new RegExp(`(\\{\\s*id\\s*:\\s*['"]${it.id}['"]\\s*,\\s*name\\s*:\\s*['"])[^'"]*(['"]\\s*,\\s*price\\s*:\\s*)\\d+(\\s*\\})`, 'g');
-                    game.sourceCode = game.sourceCode.replace(itemRegex, `$1${it.name}$2${it.price}$3`);
-                });
-            }
-
+            game.shopItems = updatedItems;
             saveState();
             closeEditShopModal();
             renderAdminPanel();
-            showToast('Daftar & harga item toko berhasil diperbarui!', 'success');
+            showToast('Daftar & harga item toko game berhasil diperbarui!', 'success');
+        }
+
+        function updateQrisPreview(previewId, src) {
+            const img = document.getElementById(previewId);
+            if (img && src) img.src = src;
+        }
+
+        function handleQrisFileUpload(event, stateKey, inputId, previewId) {
+            const file = event.target.files && event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                const img = new Image();
+                img.onload = function () {
+                    const maxDim = 420;
+                    let w = img.width;
+                    let h = img.height;
+                    if (w > maxDim || h > maxDim) {
+                        if (w > h) {
+                            h = Math.round((h * maxDim) / w);
+                            w = maxDim;
+                        } else {
+                            w = Math.round((w * maxDim) / h);
+                            h = maxDim;
+                        }
+                    }
+                    const canvas = document.createElement('canvas');
+                    canvas.width = w;
+                    canvas.height = h;
+                    const ctx = canvas.getContext('2d');
+                    ctx.fillStyle = '#ffffff';
+                    ctx.fillRect(0, 0, w, h);
+                    ctx.drawImage(img, 0, 0, w, h);
+                    const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.85);
+
+                    appState.qris[stateKey] = compressedDataUrl;
+                    const inputEl = document.getElementById(inputId);
+                    if (inputEl) inputEl.value = compressedDataUrl;
+                    updateQrisPreview(previewId, compressedDataUrl);
+                    saveState();
+                    showToast('Gambar QRIS berhasil diunggah & diterapkan!', 'success');
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
         }
 
         function saveAdminQris() {
             appState.qris.merchant = document.getElementById('admin-qris-merchant').value.trim() || 'GameZone ID Official QRIS';
             const url = document.getElementById('admin-qris-url').value.trim();
             if (url) appState.qris.imageUrl = url;
+            const shopeeQrisUrl = document.getElementById('admin-shopeepay-qris-url').value.trim();
+            if (shopeeQrisUrl) appState.qris.shopeePayQrisUrl = shopeeQrisUrl;
+            appState.qris.shopeePayNumber = document.getElementById('admin-shopeepay-number').value.trim() || '0812-3456-7890';
+            appState.qris.shopeePayName = document.getElementById('admin-shopeepay-name').value.trim() || 'GameZone ID Shopee';
+            const danaQrisUrl = document.getElementById('admin-dana-qris-url').value.trim();
+            if (danaQrisUrl) appState.qris.danaQrisUrl = danaQrisUrl;
+            appState.qris.danaNumber = document.getElementById('admin-dana-number').value.trim() || '0812-3456-7890';
+            appState.qris.danaName = document.getElementById('admin-dana-name').value.trim() || 'GameZone ID DANA';
+
+            appState.qris.feeBearer = document.getElementById('admin-qris-fee-bearer').value || 'buyer';
+            appState.qris.fees = {
+                qris: Math.max(0, Number(document.getElementById('admin-fee-qris').value || 0)),
+                shopeepay: Math.max(0, Number(document.getElementById('admin-fee-shopeepay').value || 0)),
+                dana: Math.max(0, Number(document.getElementById('admin-fee-dana').value || 0))
+            };
             saveState();
-            showToast('Pengaturan QRIS berhasil disimpan!', 'success');
+            showToast('Pengaturan QRIS Bank, ShopeePay, DANA & Tingkat Komisi disimpan!', 'success');
         }
 
         function approveTopupRequest(reqId) {
             const req = appState.topupRequests.find(r => r.id === reqId);
             if (!req || req.status !== 'pending') return;
             req.status = 'approved';
+            const methodLabel = req.method || 'QRIS';
             const user = appState.users[req.username];
             if (user) {
                 user.balance = (user.balance || 0) + Number(req.amount);
@@ -1986,7 +2269,7 @@ window.addEventListener('message',e=>{const m=e.data||{};if(m.type==='GZ_PURCHAS
                 user.transactions.unshift({
                     id: 'APR-' + Date.now(),
                     type: 'topup',
-                    label: 'Top Up QRIS Disetujui Admin',
+                    label: `Top Up ${methodLabel} Disetujui Admin`,
                     amount: Number(req.amount),
                     status: 'Sukses',
                     date: new Date().toLocaleString('id-ID')
@@ -1995,7 +2278,7 @@ window.addEventListener('message',e=>{const m=e.data||{};if(m.type==='GZ_PURCHAS
             saveState();
             updateHeaderUI();
             renderAdminPanel();
-            showToast(`Top Up ${formatRupiah(req.amount)} untuk ${req.name} disetujui!`, 'success');
+            showToast(`Top Up ${methodLabel} ${formatRupiah(req.amount)} untuk ${req.name} disetujui!`, 'success');
         }
 
         function savePaymentGatewayConfig() {
@@ -2032,13 +2315,28 @@ window.addEventListener('message',e=>{const m=e.data||{};if(m.type==='GZ_PURCHAS
 
             document.getElementById('admin-qris-merchant').value = appState.qris.merchant || '';
             document.getElementById('admin-qris-url').value = appState.qris.imageUrl || '';
+            updateQrisPreview('preview-qris-main', appState.qris.imageUrl);
+            document.getElementById('admin-shopeepay-qris-url').value = appState.qris.shopeePayQrisUrl || '';
+            updateQrisPreview('preview-qris-shopee', appState.qris.shopeePayQrisUrl);
+            document.getElementById('admin-shopeepay-number').value = appState.qris.shopeePayNumber || '';
+            document.getElementById('admin-shopeepay-name').value = appState.qris.shopeePayName || '';
+            document.getElementById('admin-dana-qris-url').value = appState.qris.danaQrisUrl || '';
+            updateQrisPreview('preview-qris-dana', appState.qris.danaQrisUrl);
+            document.getElementById('admin-dana-number').value = appState.qris.danaNumber || '';
+            document.getElementById('admin-dana-name').value = appState.qris.danaName || '';
+
+            document.getElementById('admin-qris-fee-bearer').value = appState.qris.feeBearer || 'buyer';
+            const fees = appState.qris.fees || { qris: 0.7, shopeepay: 1.5, dana: 1.0 };
+            document.getElementById('admin-fee-qris').value = fees.qris;
+            document.getElementById('admin-fee-shopeepay').value = fees.shopeepay;
+            document.getElementById('admin-fee-dana').value = fees.dana;
 
             const reqBox = document.getElementById('admin-topup-requests');
             reqBox.innerHTML = appState.topupRequests.length ? appState.topupRequests.map(r => `
                 <div class="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/70 flex items-center justify-between gap-2 text-xs">
                     <div>
-                        <div class="font-bold">${r.name} (@${r.username})</div>
-                        <div class="text-emerald-500 font-extrabold">${formatRupiah(r.amount)} • <span class="text-slate-400 font-normal">${r.status}</span></div>
+                        <div class="font-bold">${r.name} (@${r.username}) <span class="px-2 py-0.5 rounded-md text-[10px] font-extrabold ${r.method === 'ShopeePay' ? 'bg-orange-500/15 text-orange-500' : r.method === 'QRIS DANA' ? 'bg-sky-500/15 text-sky-500' : 'bg-indigo-500/15 text-indigo-500'}">${r.method || 'QRIS'}</span></div>
+                        <div class="text-emerald-500 font-extrabold">Saldo: ${formatRupiah(r.amount)} ${r.totalPay ? `<span class="text-slate-400 font-normal">(Bayar ${formatRupiah(r.totalPay)} • Komisi ${r.feeRate || 0}%)</span>` : ''} • <span class="text-slate-400 font-normal">${r.status}</span></div>
                     </div>
                     ${r.status === 'pending' ? `<button onclick="approveTopupRequest('${r.id}')" class="px-3.5 py-1.5 rounded-xl bg-emerald-600 text-white font-bold">Setujui</button>` : `<span class="text-emerald-500 font-bold">Selesai</span>`}
                 </div>
@@ -2210,20 +2508,20 @@ function doPost(e) {
         }
 
         // ==================== INISIALISASI & VERIFIKASI GLOBAL ====================
-        // Pastikan seluruh handler onclick tersedia eksplisit di scope global window
         Object.assign(window, {
             navigateTo, openCatalogPreset, filterCategory, handleSearch, toggleLikeGame,
             toggleSidebarPin, openMobileSidebar, closeMobileSidebar, toggleThemeMode,
             launchGame, closeGamePlayer, togglePlayerDrawer, togglePlayerFullscreen,
-            purchaseGameItem, openTopupCheckout, closeTopupModal, submitManualQrisTopup,
+            purchaseGameItem, openTopupCheckout, switchTopupMethod, copyShopeePayNumber,
+            copyDanaNumber, closeTopupModal, submitManualQrisTopup,
             processPaymentGatewayInstant, openAuthModal, closeAuthModal, switchAuthMode,
             handleLoginSubmit, handleRegisterSubmit, logoutUser, sendPasswordOtp,
             verifyOtpAndResetPassword, openEditProfileModal, closeEditProfileModal,
             saveProfileEdit, switchChatTab, sendChatMessage, sendInGameChat,
             switchAdminTab, toggleAdminSourceField, scanHtmlShopItems, adminAddGame,
             adminDeleteGame, openEditShopModal, closeEditShopModal, addShopItemRow,
-            saveEditedShopItems, saveAdminQris, approveTopupRequest,
-            savePaymentGatewayConfig, copySdkSnippet, copyGasTemplate,
+            saveEditedShopItems, updateQrisPreview, handleQrisFileUpload, saveAdminQris,
+            approveTopupRequest, savePaymentGatewayConfig, copySdkSnippet, copyGasTemplate,
             saveAppScriptUrl, syncWithCloud, pullFromCloud
         });
 
