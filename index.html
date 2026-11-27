@@ -1212,8 +1212,8 @@ window.addEventListener('message',e=>{const m=e.data||{};if(m.type==='GZ_PURCHAS
                 }
             ],
             chatMessages: [
-                { id: 'm1', channel: 'global', user: 'Raka Gamer', role: 'player', text: 'Halo semua! Galaxy Defender seru banget dimainkan langsung di browser!', time: '19:30' },
-                { id: 'm2', channel: 'lfg', user: 'Administrator', role: 'admin', text: 'Selamat datang di obrolan mabar GameZone ID! Jangan lupa klaim prestasi bermainmu.', time: '19:35' }
+                { id: 'msg1', channel: 'global', user: 'Administrator', role: 'admin', text: 'Selamat datang di GameZone ID! Silakan coba game HTML5 dan fitur Top Up QRIS.', time: '09:00' },
+                { id: 'msg2', channel: 'lfg', user: 'Raka Gamer', role: 'player', text: 'Yuk adu skor tinggi di Galaxy Defender!', time: '09:05' }
             ]
         };
 
@@ -1221,21 +1221,47 @@ window.addEventListener('message',e=>{const m=e.data||{};if(m.type==='GZ_PURCHAS
         let currentView = 'catalog';
         let activeCategory = 'Semua';
         let searchQuery = '';
-        let activeChatChannel = 'global';
         let activeGameId = null;
+        let activeChatChannel = 'global';
         let pendingTopupAmount = 0;
         let selectedTopupMethod = 'qris';
         let appliedTopupCoupon = null;
-        let pendingOtpData = null;
         let editingShopGameId = null;
-        let autoSyncTimer = null;
+        let pendingOtpData = null;
+        let cloudSyncTimer = null;
 
         function scheduleAutoCloudSync() {
             if (!appState.appScriptUrl) return;
-            clearTimeout(autoSyncTimer);
-            autoSyncTimer = setTimeout(() => {
+            clearTimeout(cloudSyncTimer);
+            cloudSyncTimer = setTimeout(() => {
                 syncWithCloud(false);
-            }, 1500);
+            }, 2500);
+        }
+
+        function ensureUserShape(u, fallbackUsername = '') {
+            if (!u || typeof u !== 'object') return u;
+            u.username = u.username || fallbackUsername;
+            u.name = u.name || u.username || 'Pemain';
+            u.balance = Number(u.balance || 0);
+            u.points = Number(u.points || 0);
+            u.inventory = Array.isArray(u.inventory) ? u.inventory : [];
+            u.achievements = Array.isArray(u.achievements) ? u.achievements : [];
+            u.savedProgress = (u.savedProgress && typeof u.savedProgress === 'object') ? u.savedProgress : {};
+            u.transactions = Array.isArray(u.transactions) ? u.transactions : [];
+            u.claimedCoupons = Array.isArray(u.claimedCoupons) ? u.claimedCoupons : [];
+            if (u.claimedCouponCode && !u.claimedCoupons.includes(u.claimedCouponCode)) {
+                u.claimedCoupons.push(u.claimedCouponCode);
+            }
+            return u;
+        }
+
+        function normalizeAllUsers() {
+            if (!appState.users || typeof appState.users !== 'object') {
+                appState.users = JSON.parse(JSON.stringify(DEFAULT_STATE.users));
+            }
+            Object.entries(appState.users).forEach(([uname, uObj]) => {
+                ensureUserShape(uObj, uname);
+            });
         }
 
         function loadState() {
@@ -1255,9 +1281,9 @@ window.addEventListener('message',e=>{const m=e.data||{};if(m.type==='GZ_PURCHAS
                         paymentGateway: { ...DEFAULT_STATE.paymentGateway, ...(parsed.paymentGateway || {}) },
                         users: parsed.users || DEFAULT_STATE.users,
                         games: Array.isArray(parsed.games) && parsed.games.length ? parsed.games : DEFAULT_STATE.games,
-                        topupRequests: parsed.topupRequests || [],
+                        topupRequests: Array.isArray(parsed.topupRequests) ? parsed.topupRequests : [],
                         coupons: Array.isArray(parsed.coupons) ? parsed.coupons : DEFAULT_STATE.coupons,
-                        chatMessages: parsed.chatMessages || DEFAULT_STATE.chatMessages
+                        chatMessages: Array.isArray(parsed.chatMessages) ? parsed.chatMessages : DEFAULT_STATE.chatMessages
                     };
                 } else {
                     appState = JSON.parse(JSON.stringify(DEFAULT_STATE));
@@ -1265,6 +1291,7 @@ window.addEventListener('message',e=>{const m=e.data||{};if(m.type==='GZ_PURCHAS
             } catch (e) {
                 appState = JSON.parse(JSON.stringify(DEFAULT_STATE));
             }
+            normalizeAllUsers();
             if (!appState.appScriptUrl && DEFAULT_APPSCRIPT_URL) {
                 appState.appScriptUrl = DEFAULT_APPSCRIPT_URL;
             }
@@ -2600,6 +2627,8 @@ window.addEventListener('message',e=>{const m=e.data||{};if(m.type==='GZ_PURCHAS
             saveState();
             closeAuthModal();
             updateHeaderUI();
+            renderContinuePlaying();
+            renderGamesGrid();
             if (currentView === 'wallet') renderWalletView();
             showToast(`Selamat datang kembali, ${user.name}!`, 'success');
         }
@@ -2640,6 +2669,8 @@ window.addEventListener('message',e=>{const m=e.data||{};if(m.type==='GZ_PURCHAS
             saveState();
             closeAuthModal();
             updateHeaderUI();
+            renderContinuePlaying();
+            renderGamesGrid();
             if (currentView === 'wallet') renderWalletView();
             showToast(`Akun berhasil dibuat! Bonus saldo Rp 25.000 ditambahkan.`, 'success');
         }
@@ -2655,6 +2686,8 @@ window.addEventListener('message',e=>{const m=e.data||{};if(m.type==='GZ_PURCHAS
             if (directInput) directInput.value = '';
             saveState();
             updateHeaderUI();
+            renderContinuePlaying();
+            renderGamesGrid();
             if (currentView === 'admin') navigateTo('catalog');
             if (currentView === 'wallet') renderWalletView();
             showToast('Anda telah keluar dari akun.', 'info');
@@ -3222,16 +3255,23 @@ window.addEventListener('message',e=>{const m=e.data||{};if(m.type==='GZ_PURCHAS
 
         function adminDeleteGame(gameId) {
             if (!isAdminUser()) return;
-            appState.games = appState.games.filter(g => g.id !== gameId);
+            appState.games = (appState.games || []).filter(g => String(g.id) !== String(gameId));
+            Object.values(appState.users || {}).forEach(u => {
+                if (u && u.savedProgress && u.savedProgress[gameId]) {
+                    delete u.savedProgress[gameId];
+                }
+            });
             saveState();
             renderAdminPanel();
+            renderContinuePlaying();
+            renderGamesGrid();
             showToast('Game dihapus dari portal.', 'info');
         }
 
         function openEditShopModal(gameId) {
-            const game = appState.games.find(g => g.id === gameId);
+            const game = (appState.games || []).find(g => String(g.id) === String(gameId));
             if (!game) return;
-            editingShopGameId = gameId;
+            editingShopGameId = game.id;
             document.getElementById('edit-shop-modal-title').textContent = `Edit Toko: ${game.title}`;
             renderEditShopRows(game.shopItems || []);
             document.getElementById('edit-shop-modal').classList.remove('hidden');
@@ -3247,9 +3287,9 @@ window.addEventListener('message',e=>{const m=e.data||{};if(m.type==='GZ_PURCHAS
         function renderEditShopRows(items) {
             const container = document.getElementById('edit-shop-items-container');
             container.innerHTML = items.length ? items.map(it => `
-                <div class="shop-edit-row grid grid-cols-12 gap-2 items-center p-2.5 rounded-2xl bg-slate-100 dark:bg-slate-800" data-id="${it.id}">
-                    <input type="text" value="${it.name}" class="shop-row-name col-span-6 px-3 py-1.5 rounded-xl bg-white dark:bg-slate-900 text-xs font-bold outline-none">
-                    <input type="number" value="${it.price}" class="shop-row-price col-span-4 px-3 py-1.5 rounded-xl bg-white dark:bg-slate-900 text-xs font-bold outline-none">
+                <div class="shop-edit-row grid grid-cols-12 gap-2 items-center p-2.5 rounded-2xl bg-slate-100 dark:bg-slate-800" data-id="${escapeHtml(it.id)}">
+                    <input type="text" value="${escapeHtml(it.name)}" class="shop-row-name col-span-6 px-3 py-1.5 rounded-xl bg-white dark:bg-slate-900 text-xs font-bold outline-none">
+                    <input type="number" value="${Number(it.price || 0)}" class="shop-row-price col-span-4 px-3 py-1.5 rounded-xl bg-white dark:bg-slate-900 text-xs font-bold outline-none">
                     <button type="button" onclick="this.parentElement.remove()" class="col-span-2 py-1.5 rounded-xl bg-rose-500/15 text-rose-500 text-xs font-bold">Hapus</button>
                 </div>
             `).join('') : `<div class="text-xs text-slate-400 text-center py-4">Belum ada item. Tambahkan item baru di bawah.</div>`;
@@ -3280,7 +3320,7 @@ window.addEventListener('message',e=>{const m=e.data||{};if(m.type==='GZ_PURCHAS
         }
 
         function saveEditedShopItems() {
-            const game = appState.games.find(g => g.id === editingShopGameId);
+            const game = (appState.games || []).find(g => String(g.id) === String(editingShopGameId));
             if (!game) return;
             const rows = document.querySelectorAll('#edit-shop-items-container .shop-edit-row');
             const updatedItems = [];
@@ -3452,10 +3492,10 @@ window.addEventListener('message',e=>{const m=e.data||{};if(m.type==='GZ_PURCHAS
             reqBox.innerHTML = appState.topupRequests.length ? appState.topupRequests.map(r => `
                 <div class="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/70 flex items-center justify-between gap-2 text-xs">
                     <div>
-                        <div class="font-bold">${r.name} (@${r.username}) <span class="px-2 py-0.5 rounded-md text-[10px] font-extrabold ${r.method === 'ShopeePay' ? 'bg-orange-500/15 text-orange-500' : r.method === 'QRIS DANA' ? 'bg-sky-500/15 text-sky-500' : 'bg-indigo-500/15 text-indigo-500'}">${r.method || 'QRIS'}</span> ${r.couponCode ? `<span class="px-2 py-0.5 rounded-md bg-amber-500/15 text-amber-500 text-[10px] font-extrabold">🎟️ ${escapeHtml(r.couponCode)}</span>` : ''}</div>
-                        <div class="text-emerald-500 font-extrabold">Saldo: ${formatRupiah(r.amount)} ${r.totalPay ? `<span class="text-slate-400 font-normal">(Bayar ${formatRupiah(r.totalPay)} • Komisi ${r.feeRate || 0}%)</span>` : ''} • <span class="text-slate-400 font-normal">${r.status}</span></div>
+                        <div class="font-bold">${escapeHtml(r.name)} (@${escapeHtml(r.username)}) <span class="px-2 py-0.5 rounded-md text-[10px] font-extrabold ${r.method === 'ShopeePay' ? 'bg-orange-500/15 text-orange-500' : r.method === 'QRIS DANA' ? 'bg-sky-500/15 text-sky-500' : 'bg-indigo-500/15 text-indigo-500'}">${escapeHtml(r.method || 'QRIS')}</span> ${r.couponCode ? `<span class="px-2 py-0.5 rounded-md bg-amber-500/15 text-amber-500 text-[10px] font-extrabold">🎟️ ${escapeHtml(r.couponCode)}</span>` : ''}</div>
+                        <div class="text-emerald-500 font-extrabold">Saldo: ${formatRupiah(r.amount)} ${r.totalPay ? `<span class="text-slate-400 font-normal">(Bayar ${formatRupiah(r.totalPay)} • Komisi ${r.feeRate || 0}%)</span>` : ''} • <span class="text-slate-400 font-normal">${escapeHtml(r.status)}</span></div>
                     </div>
-                    ${r.status === 'pending' ? `<button onclick="approveTopupRequest('${r.id}')" class="px-3.5 py-1.5 rounded-xl bg-emerald-600 text-white font-bold">Setujui</button>` : `<span class="text-emerald-500 font-bold">Selesai</span>`}
+                    ${r.status === 'pending' ? `<button onclick="approveTopupRequest('${escapeHtml(r.id)}')" class="px-3.5 py-1.5 rounded-xl bg-emerald-600 text-white font-bold">Setujui</button>` : `<span class="text-emerald-500 font-bold">Selesai</span>`}
                 </div>
             `).join('') : `<div class="text-xs text-slate-400 py-4">Belum ada antrean Top Up.</div>`;
 
@@ -3602,10 +3642,13 @@ function doPost(e) {
                         paymentGateway: { ...DEFAULT_STATE.paymentGateway, ...(appState.paymentGateway || {}), ...(data.paymentGateway || {}) },
                         users: (data.users && Object.keys(data.users).length) ? data.users : appState.users,
                         games: (Array.isArray(data.games) && data.games.length) ? data.games : appState.games,
+                        topupRequests: Array.isArray(data.topupRequests) ? data.topupRequests : appState.topupRequests,
                         coupons: Array.isArray(data.coupons) ? data.coupons : appState.coupons,
+                        chatMessages: Array.isArray(data.chatMessages) ? data.chatMessages : appState.chatMessages,
                         portalVersion: data.portalVersion || appState.portalVersion,
                         currentUser: activeSession
                     };
+                    normalizeAllUsers();
                     saveState(false);
                     applyBranding();
                     updateHeaderUI();
